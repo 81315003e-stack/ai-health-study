@@ -1,0 +1,2836 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Health Information Study</title>
+  <meta name="description" content="A research study on user interaction with AI-generated health summaries." />
+
+  <!-- Fonts: DM Serif Display (headings) + DM Sans (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap" rel="stylesheet" />
+
+  <style>
+    .cite-tag {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-surface-offset);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 0 8px;
+  font-size: 0.7rem;
+  color: var(--color-primary);
+  cursor: pointer;
+  margin-left: 4px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+.cite-tag:hover {
+  background: var(--color-primary-highlight);
+  border-color: var(--color-primary);
+}
+.hide-cites .cite-tag { display: none !important; }
+    /* =========================================================
+       DESIGN TOKENS
+    ========================================================= */
+    :root,
+    [data-theme='light'] {
+      /* Surfaces */
+      --color-bg: #f5f7fa;
+      --color-surface: #ffffff;
+      --color-surface-2: #f9fafb;
+      --color-surface-offset: #eef1f6;
+      --color-surface-offset-2: #e4e8f0;
+      --color-surface-dynamic: #d9dfe9;
+      --color-divider: #dde2eb;
+      --color-border: #cdd4e0;
+
+      /* Text */
+      --color-text: #1e2433;
+      --color-text-muted: #5a6177;
+      --color-text-faint: #9ba3b8;
+      --color-text-inverse: #f5f7fa;
+
+      /* Primary — slate-blue academic */
+      --color-primary: #3655a5;
+      --color-primary-hover: #2a4389;
+      --color-primary-active: #1e316d;
+      --color-primary-highlight: #d0d9f0;
+
+      /* Accent — teal for interactive elements */
+      --color-accent: #1c7d8c;
+      --color-accent-hover: #155f6b;
+      --color-accent-highlight: #cce7eb;
+
+      /* Warning */
+      --color-warning: #a85b1e;
+      --color-warning-bg: #fdf1e8;
+      --color-warning-border: #f0c490;
+
+      /* Success */
+      --color-success: #2d7a3e;
+      --color-success-bg: #eaf4ec;
+      --color-success-border: #9fd1a9;
+
+      /* Error */
+      --color-error: #b52a2a;
+      --color-error-bg: #fdf0f0;
+
+      /* Info */
+      --color-info: #1a5f8a;
+      --color-info-bg: #e8f3fb;
+      --color-info-border: #9ecfec;
+
+      /* Radius */
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      --radius-2xl: 1.5rem;
+      --radius-full: 9999px;
+
+      /* Spacing */
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
+      --space-16: 4rem;
+      --space-20: 5rem;
+      --space-24: 6rem;
+
+      /* Type */
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --text-2xl: clamp(2rem, 1.2rem + 2.5vw, 3rem);
+
+      /* Fonts */
+      --font-display: 'DM Serif Display', Georgia, serif;
+      --font-body: 'DM Sans', 'Helvetica Neue', sans-serif;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 2px rgba(30, 36, 51, 0.06);
+      --shadow-md: 0 4px 12px rgba(30, 36, 51, 0.09);
+      --shadow-lg: 0 12px 32px rgba(30, 36, 51, 0.12);
+      --shadow-focus: 0 0 0 3px rgba(54, 85, 165, 0.22);
+
+      /* Transitions */
+      --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+
+      /* Layout */
+      --content-narrow: 640px;
+      --content-default: 800px;
+      --content-wide: 1100px;
+    }
+
+    [data-theme='dark'] {
+      --color-bg: #141720;
+      --color-surface: #1c2030;
+      --color-surface-2: #20253a;
+      --color-surface-offset: #242840;
+      --color-surface-offset-2: #2a2f48;
+      --color-surface-dynamic: #333858;
+      --color-divider: #2e3350;
+      --color-border: #3a4060;
+      --color-text: #d0d4e8;
+      --color-text-muted: #7a82a0;
+      --color-text-faint: #4f5570;
+      --color-text-inverse: #1c2030;
+      --color-primary: #7a9de8;
+      --color-primary-hover: #5e84d8;
+      --color-primary-active: #4570cc;
+      --color-primary-highlight: #283060;
+      --color-accent: #4dbcd0;
+      --color-accent-hover: #33a8bf;
+      --color-accent-highlight: #1a3a45;
+      --color-warning: #dd8844;
+      --color-warning-bg: #2a2010;
+      --color-warning-border: #7a4a18;
+      --color-success: #5baa6e;
+      --color-success-bg: #112218;
+      --color-success-border: #2a6038;
+      --color-error: #e06060;
+      --color-error-bg: #280d0d;
+      --color-info: #5baad5;
+      --color-info-bg: #0e2030;
+      --color-info-border: #2a5575;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme]) {
+        --color-bg: #141720;
+        --color-surface: #1c2030;
+        --color-surface-2: #20253a;
+        --color-surface-offset: #242840;
+        --color-surface-offset-2: #2a2f48;
+        --color-surface-dynamic: #333858;
+        --color-divider: #2e3350;
+        --color-border: #3a4060;
+        --color-text: #d0d4e8;
+        --color-text-muted: #7a82a0;
+        --color-text-faint: #4f5570;
+        --color-text-inverse: #1c2030;
+        --color-primary: #7a9de8;
+        --color-primary-hover: #5e84d8;
+        --color-primary-active: #4570cc;
+        --color-primary-highlight: #283060;
+        --color-accent: #4dbcd0;
+        --color-accent-hover: #33a8bf;
+        --color-accent-highlight: #1a3a45;
+        --color-warning: #dd8844;
+        --color-warning-bg: #2a2010;
+        --color-warning-border: #7a4a18;
+        --color-success: #5baa6e;
+        --color-success-bg: #112218;
+        --color-success-border: #2a6038;
+        --color-error: #e06060;
+        --color-error-bg: #280d0d;
+        --color-info: #5baad5;
+        --color-info-bg: #0e2030;
+        --color-info-border: #2a5575;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+        --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.4);
+      }
+    }
+
+    /* =========================================================
+       BASE RESET
+    ========================================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html {
+      -webkit-text-size-adjust: none;
+      text-size-adjust: none;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      scroll-behavior: smooth;
+      scroll-padding-top: var(--space-16);
+    }
+    body {
+      min-height: 100dvh;
+      line-height: 1.65;
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      color: var(--color-text);
+      background-color: var(--color-bg);
+    }
+    img, picture, video, canvas, svg { display: block; max-width: 100%; height: auto; }
+    input, button, textarea, select { font: inherit; color: inherit; }
+    h1, h2, h3, h4, h5, h6 { text-wrap: balance; line-height: 1.2; font-family: var(--font-display); }
+    p, li, figcaption { text-wrap: pretty; max-width: 72ch; }
+    button { cursor: pointer; background: none; border: none; }
+    ::selection { background: var(--color-primary-highlight); color: var(--color-text); }
+    :focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; border-radius: var(--radius-sm); }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+    a, button, [role='button'], input, textarea, select {
+      transition: color var(--transition), background var(--transition), border-color var(--transition), box-shadow var(--transition), opacity var(--transition);
+    }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }
+
+    /* =========================================================
+       LAYOUT
+    ========================================================= */
+    .site-wrap {
+      display: flex;
+      flex-direction: column;
+      min-height: 100dvh;
+    }
+
+    /* HEADER */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-divider);
+      padding: var(--space-3) var(--space-5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      box-shadow: var(--shadow-sm);
+    }
+    .site-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      text-decoration: none;
+      color: var(--color-text);
+    }
+    .site-logo svg { flex-shrink: 0; color: var(--color-primary); }
+    .site-logo-text {
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    .site-logo-sub {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      font-weight: 400;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .btn-icon {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: var(--radius-full);
+      display: grid;
+      place-items: center;
+      color: var(--color-text-muted);
+      background: transparent;
+    }
+    .btn-icon:hover { background: var(--color-surface-offset); color: var(--color-text); }
+
+    /* PROGRESS BAR */
+    .progress-bar-wrap {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-divider);
+      padding: var(--space-3) var(--space-5);
+    }
+    .progress-steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      max-width: var(--content-wide);
+      margin: 0 auto;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .progress-steps::-webkit-scrollbar { display: none; }
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-shrink: 0;
+    }
+    .progress-step-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-md);
+      cursor: default;
+      min-width: 4.5rem;
+    }
+    .progress-step-dot {
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: var(--radius-full);
+      border: 2px solid var(--color-border);
+      background: var(--color-surface);
+      display: grid;
+      place-items: center;
+      font-size: var(--text-xs);
+      font-weight: 700;
+      color: var(--color-text-faint);
+      transition: all var(--transition);
+    }
+    .progress-step-label {
+      font-size: 0.65rem;
+      color: var(--color-text-faint);
+      text-align: center;
+      white-space: nowrap;
+      font-weight: 500;
+      line-height: 1;
+    }
+    .progress-step.active .progress-step-dot {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+    }
+    .progress-step.active .progress-step-label { color: var(--color-primary); }
+    .progress-step.done .progress-step-dot {
+      background: var(--color-success-bg);
+      border-color: var(--color-success-border);
+      color: var(--color-success);
+    }
+    .progress-step.done .progress-step-label { color: var(--color-success); }
+    .progress-connector {
+      flex: 1;
+      min-width: 1.5rem;
+      height: 2px;
+      background: var(--color-border);
+      transition: background var(--transition);
+    }
+    .progress-connector.done { background: var(--color-success-border); }
+
+    /* MAIN CONTENT */
+    main { flex: 1; }
+
+    /* SECTIONS */
+    .study-section {
+      display: none;
+      animation: fadeSlideIn 0.35s ease forwards;
+    }
+    .study-section.active { display: block; }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-inner {
+      max-width: var(--content-default);
+      margin: 0 auto;
+      padding: clamp(var(--space-8), 5vw, var(--space-16)) var(--space-5);
+    }
+    .section-inner.wide {
+      max-width: var(--content-wide);
+    }
+
+    /* =========================================================
+       TYPOGRAPHY
+    ========================================================= */
+    .section-eyebrow {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-primary);
+      margin-bottom: var(--space-2);
+      font-family: var(--font-body);
+    }
+    .section-title {
+      font-size: var(--text-xl);
+      color: var(--color-text);
+      margin-bottom: var(--space-4);
+    }
+    .section-lead {
+      font-size: var(--text-base);
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-8);
+      max-width: 62ch;
+    }
+
+    /* =========================================================
+       CARDS
+    ========================================================= */
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-sm);
+    }
+    .card + .card { margin-top: var(--space-5); }
+    .card-title {
+      font-size: var(--text-lg);
+      font-family: var(--font-display);
+      margin-bottom: var(--space-3);
+    }
+    .card-body { color: var(--color-text-muted); font-size: var(--text-base); }
+
+    /* =========================================================
+       BUTTONS
+    ========================================================= */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-6);
+      border-radius: var(--radius-lg);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      font-family: var(--font-body);
+      text-decoration: none;
+      cursor: pointer;
+      border: 2px solid transparent;
+      min-height: 2.75rem;
+      white-space: nowrap;
+    }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-primary {
+      background: var(--color-primary);
+      color: #fff;
+      border-color: var(--color-primary);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--color-primary-hover);
+      border-color: var(--color-primary-hover);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--color-primary);
+      border-color: var(--color-border);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--color-surface-offset);
+      border-color: var(--color-primary);
+    }
+    .btn-accent {
+      background: var(--color-accent);
+      color: #fff;
+      border-color: var(--color-accent);
+    }
+    .btn-accent:hover:not(:disabled) {
+      background: var(--color-accent-hover);
+      border-color: var(--color-accent-hover);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--color-text-muted);
+      border-color: transparent;
+    }
+    .btn-ghost:hover:not(:disabled) { background: var(--color-surface-offset); color: var(--color-text); }
+    .btn-danger {
+      background: var(--color-error-bg);
+      color: var(--color-error);
+      border-color: var(--color-error);
+    }
+    .btn-sm { padding: var(--space-2) var(--space-4); font-size: var(--text-xs); min-height: 2rem; }
+    .btn-lg { padding: var(--space-4) var(--space-8); font-size: var(--text-base); min-height: 3.25rem; }
+    .btn-full { width: 100%; }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      margin-top: var(--space-6);
+    }
+
+    /* =========================================================
+       FORM ELEMENTS
+    ========================================================= */
+    .form-group { margin-bottom: var(--space-5); }
+    .form-label {
+      display: block;
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: var(--space-2);
+    }
+    .form-label .required { color: var(--color-error); margin-left: var(--space-1); }
+    .form-input {
+      width: 100%;
+      padding: var(--space-3) var(--space-4);
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface);
+      color: var(--color-text);
+      font-size: var(--text-base);
+    }
+    .form-input:focus { outline: none; border-color: var(--color-primary); box-shadow: var(--shadow-focus); }
+    .form-input::placeholder { color: var(--color-text-faint); }
+    .form-hint { font-size: var(--text-xs); color: var(--color-text-muted); margin-top: var(--space-1); }
+    textarea.form-input { resize: vertical; min-height: 5rem; }
+
+    /* Likert Scale */
+    .scale-group { margin-bottom: var(--space-6); }
+    .scale-label {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: var(--space-3);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+    }
+    .scale-label-text { max-width: 42ch; }
+    .scale-required { color: var(--color-error); font-size: var(--text-xs); font-weight: 400; align-self: center; }
+    .scale-options {
+      display: flex;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+    .scale-option input[type='radio'] { position: absolute; opacity: 0; width: 0; height: 0; }
+    .scale-option label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-1);
+      cursor: pointer;
+    }
+    .scale-btn {
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--color-border);
+      background: var(--color-surface);
+      display: grid;
+      place-items: center;
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--color-text-muted);
+      transition: all var(--transition);
+    }
+    .scale-option input[type='radio']:checked + label .scale-btn {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+    }
+    .scale-option label:hover .scale-btn {
+      border-color: var(--color-primary);
+      background: var(--color-primary-highlight);
+      color: var(--color-primary);
+    }
+    .scale-tick {
+      font-size: 0.6rem;
+      color: var(--color-text-faint);
+      text-align: center;
+      white-space: nowrap;
+    }
+    .scale-ends {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--text-xs);
+      color: var(--color-text-faint);
+      margin-top: var(--space-1);
+      padding: 0 var(--space-1);
+    }
+
+    /* Radio group */
+    .radio-group { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-2); }
+    .radio-pill input[type='radio'] { position: absolute; opacity: 0; width: 0; height: 0; }
+    .radio-pill label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-5);
+      border-radius: var(--radius-full);
+      border: 1.5px solid var(--color-border);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      cursor: pointer;
+      background: var(--color-surface);
+      color: var(--color-text-muted);
+    }
+    .radio-pill label:hover { border-color: var(--color-primary); color: var(--color-primary); background: var(--color-primary-highlight); }
+    .radio-pill input[type='radio']:checked + label {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+    }
+
+    /* Checkbox */
+    .checkbox-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--color-border);
+      cursor: pointer;
+      background: var(--color-surface);
+    }
+    .checkbox-wrap:has(input:checked) {
+      border-color: var(--color-primary);
+      background: var(--color-primary-highlight);
+    }
+    .checkbox-wrap input[type='checkbox'] {
+      width: 1.25rem;
+      height: 1.25rem;
+      flex-shrink: 0;
+      margin-top: 0.1em;
+      cursor: pointer;
+      accent-color: var(--color-primary);
+    }
+    .checkbox-label { font-size: var(--text-sm); color: var(--color-text); line-height: 1.5; cursor: pointer; }
+
+    /* =========================================================
+       ALERT / NOTICE BOXES
+    ========================================================= */
+    .alert {
+      display: flex;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-5);
+      border-radius: var(--radius-lg);
+      border: 1px solid;
+      margin-bottom: var(--space-5);
+      align-items: flex-start;
+    }
+    .alert-icon { flex-shrink: 0; margin-top: 0.1em; }
+    .alert-body { flex: 1; }
+    .alert-title { font-size: var(--text-sm); font-weight: 700; margin-bottom: var(--space-1); }
+    .alert-text { font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.55; }
+    .alert-info { background: var(--color-info-bg); border-color: var(--color-info-border); color: var(--color-info); }
+    .alert-warning { background: var(--color-warning-bg); border-color: var(--color-warning-border); color: var(--color-warning); }
+    .alert-success { background: var(--color-success-bg); border-color: var(--color-success-border); color: var(--color-success); }
+
+    /* =========================================================
+       WELCOME SECTION
+    ========================================================= */
+    .welcome-hero {
+      background: linear-gradient(135deg, var(--color-primary-highlight) 0%, var(--color-surface) 60%);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-2xl);
+      padding: clamp(var(--space-10), 6vw, var(--space-16)) clamp(var(--space-6), 5vw, var(--space-12));
+      margin-bottom: var(--space-8);
+      position: relative;
+      overflow: hidden;
+    }
+    .welcome-hero::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 220px;
+      height: 220px;
+      border-radius: var(--radius-full);
+      background: radial-gradient(circle, var(--color-primary-highlight), transparent 70%);
+      opacity: 0.5;
+    }
+    .welcome-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      background: var(--color-primary-highlight);
+      color: var(--color-primary);
+      border: 1px solid var(--color-border);
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: var(--space-5);
+    }
+    .welcome-title {
+      font-size: var(--text-2xl);
+      color: var(--color-text);
+      margin-bottom: var(--space-4);
+      line-height: 1.1;
+    }
+    .welcome-subtitle {
+      font-size: var(--text-base);
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-8);
+      max-width: 56ch;
+    }
+    .welcome-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: var(--space-4);
+      margin-top: var(--space-8);
+    }
+    .welcome-meta-item {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+    }
+    .welcome-meta-label { font-size: var(--text-xs); color: var(--color-text-faint); margin-bottom: var(--space-1); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+    .welcome-meta-value { font-size: var(--text-sm); font-weight: 600; color: var(--color-text); }
+
+    /* =========================================================
+       CONSENT SECTION
+    ========================================================= */
+    .consent-items { list-style: none; display: flex; flex-direction: column; gap: var(--space-3); margin-bottom: var(--space-8); }
+    .consent-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-5);
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+    }
+    .consent-item-icon { color: var(--color-primary); flex-shrink: 0; margin-top: 2px; }
+    .consent-item-text { font-size: var(--text-sm); color: var(--color-text); line-height: 1.55; }
+    .consent-checks { display: flex; flex-direction: column; gap: var(--space-3); margin-bottom: var(--space-6); }
+
+    /* =========================================================
+       BACKGROUND / DHL SECTION
+    ========================================================= */
+    .question-list { display: flex; flex-direction: column; gap: var(--space-4); }
+    .dhl-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--space-3);
+      margin-bottom: var(--space-4);
+    }
+    .dhl-card {
+      padding: var(--space-4);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface-2);
+    }
+    .dhl-card-label { font-size: var(--text-xs); font-weight: 600; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: var(--space-2); }
+
+    /* =========================================================
+       TUTORIAL SECTION
+    ========================================================= */
+    .tutorial-steps { display: flex; flex-direction: column; gap: var(--space-4); counter-reset: tutorial-step; }
+    .tutorial-step {
+      display: flex;
+      gap: var(--space-4);
+      padding: var(--space-5);
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      counter-increment: tutorial-step;
+    }
+    .tutorial-step-num {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: var(--radius-full);
+      background: var(--color-primary);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: var(--text-sm);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .tutorial-step-body {}
+    .tutorial-step-title { font-size: var(--text-sm); font-weight: 700; margin-bottom: var(--space-1); }
+    .tutorial-step-text { font-size: var(--text-sm); color: var(--color-text-muted); }
+
+    /* =========================================================
+       SCENARIO SECTION
+    ========================================================= */
+    .scenario-header {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5) var(--space-6);
+      margin-bottom: var(--space-5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+    }
+    .scenario-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-neutral { background: var(--color-surface-offset); color: var(--color-text-muted); border: 1px solid var(--color-border); }
+    .badge-primary { background: var(--color-primary-highlight); color: var(--color-primary); border: 1px solid var(--color-border); }
+    .badge-warning { background: var(--color-warning-bg); color: var(--color-warning); border: 1px solid var(--color-warning-border); }
+    .badge-low { background: var(--color-success-bg); color: var(--color-success); border: 1px solid var(--color-success-border); }
+    .badge-high { background: var(--color-warning-bg); color: var(--color-warning); border: 1px solid var(--color-warning-border); }
+
+    /* Three panels layout */
+    .scenario-panels {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-5);
+      margin-bottom: var(--space-6);
+    }
+    @media (min-width: 900px) {
+      .scenario-panels {
+        grid-template-columns: 1fr 1.4fr;
+        grid-template-rows: auto auto;
+      }
+      .panel-search-context { grid-column: 1; grid-row: 1; }
+      .panel-ai-overview { grid-column: 2; grid-row: 1 / 3; }
+      .panel-sources { grid-column: 1; grid-row: 2; }
+    }
+
+    .panel {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .panel-header {
+      padding: var(--space-4) var(--space-5);
+      border-bottom: 1px solid var(--color-divider);
+      background: var(--color-surface-2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+    .panel-header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .panel-title {
+      font-size: var(--text-sm);
+      font-weight: 700;
+      color: var(--color-text);
+      font-family: var(--font-body);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .panel-icon { color: var(--color-primary); flex-shrink: 0; }
+    .panel-body { padding: var(--space-5); }
+
+    /* Search Context Panel */
+    .search-scenario-title {
+      font-size: var(--text-base);
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: var(--space-2);
+    }
+    .search-scenario-desc {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-5);
+      line-height: 1.6;
+    }
+    .search-bar-wrap {
+      position: relative;
+    }
+    .search-bar-label { font-size: var(--text-xs); font-weight: 600; color: var(--color-text-muted); margin-bottom: var(--space-2); text-transform: uppercase; letter-spacing: 0.06em; }
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      background: var(--color-surface-2);
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-3) var(--space-4);
+    }
+    .search-bar-icon { color: var(--color-text-faint); flex-shrink: 0; }
+    .search-bar-text {
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .search-lock {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--text-xs);
+      color: var(--color-text-faint);
+      flex-shrink: 0;
+    }
+
+    /* AI Overview Panel */
+    .ai-overview-content {}
+    .ai-summary-text {
+      font-size: var(--text-base);
+      color: var(--color-text);
+      line-height: 1.7;
+      margin-bottom: var(--space-4);
+    }
+    .ai-note {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      font-style: italic;
+      margin-bottom: var(--space-4);
+      padding: var(--space-3) var(--space-4);
+      border-left: 3px solid var(--color-border);
+      background: var(--color-surface-2);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    }
+    .safety-cue {
+      display: none;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      background: var(--color-warning-bg);
+      border: 1px solid var(--color-warning-border);
+      border-radius: var(--radius-lg);
+      margin-top: var(--space-4);
+      cursor: pointer;
+    }
+    .safety-cue.visible { display: flex; }
+    .safety-cue-icon { color: var(--color-warning); flex-shrink: 0; }
+    .safety-cue-text { font-size: var(--text-sm); color: var(--color-warning); line-height: 1.55; }
+
+    /* Sources Panel */
+    .sources-desc { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-4); }
+    .sources-list { display: flex; flex-direction: column; gap: var(--space-3); }
+    .source-card {
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .source-card-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      width: 100%;
+      text-align: left;
+      background: var(--color-surface-2);
+      color: var(--color-text);
+    }
+    .source-card-btn:hover { background: var(--color-surface-offset); }
+    .source-type-badge {
+      flex-shrink: 0;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px var(--space-2);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+    .source-card-info { flex: 1; min-width: 0; }
+    .source-label { font-size: var(--text-sm); font-weight: 600; color: var(--color-primary); margin-bottom: var(--space-1); }
+    .source-snippet { font-size: var(--text-xs); color: var(--color-text-muted); line-height: 1.55; }
+    .source-expand {
+      padding: var(--space-3) var(--space-4);
+      background: var(--color-surface);
+      border-top: 1px solid var(--color-divider);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      display: none;
+    }
+    .source-expand.open { display: block; }
+    .sources-hidden {
+      display: none;
+      text-align: center;
+      padding: var(--space-8) var(--space-4);
+      color: var(--color-text-faint);
+      font-size: var(--text-sm);
+    }
+    .sources-hidden.visible { display: block; }
+
+    /* Response Area */
+    .response-area {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: var(--space-5);
+    }
+    .response-area-header {
+      padding: var(--space-4) var(--space-6);
+      border-bottom: 1px solid var(--color-divider);
+      background: var(--color-surface-2);
+    }
+    .response-area-title { font-size: var(--text-sm); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text); }
+    .response-area-body { padding: var(--space-6); }
+
+    .judgment-group {
+      background: var(--color-surface-offset);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      margin-bottom: var(--space-5);
+    }
+    .judgment-label { font-size: var(--text-sm); font-weight: 700; margin-bottom: var(--space-3); }
+
+    /* Scenario action buttons */
+    .scenario-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      margin-top: var(--space-5);
+      padding: var(--space-5);
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+    }
+    .scenario-actions-label { font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-muted); margin-bottom: var(--space-3); width: 100%; }
+
+    /* =========================================================
+       REFLECTION SECTION
+    ========================================================= */
+    .reflection-cards { display: flex; flex-direction: column; gap: var(--space-5); }
+
+    /* =========================================================
+       DEBRIEF SECTION
+    ========================================================= */
+    .export-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+    .export-card {
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    .export-card-icon {
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: var(--radius-lg);
+      background: var(--color-primary-highlight);
+      display: grid;
+      place-items: center;
+      color: var(--color-primary);
+    }
+    .export-card-title { font-size: var(--text-sm); font-weight: 700; color: var(--color-text); }
+    .export-card-desc { font-size: var(--text-xs); color: var(--color-text-muted); flex: 1; }
+
+    /* =========================================================
+       DIVIDER
+    ========================================================= */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--color-divider);
+      margin: var(--space-8) 0;
+    }
+
+    /* =========================================================
+       DEBUG PANEL
+    ========================================================= */
+    .debug-panel {
+      position: fixed;
+      bottom: var(--space-4);
+      right: var(--space-4);
+      z-index: 999;
+      width: min(380px, calc(100vw - var(--space-8)));
+    }
+    .debug-toggle {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      background: #1e2433;
+      color: #7dd3fc;
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid #334155;
+      margin-left: auto;
+      width: fit-content;
+      display: flex;
+    }
+    .debug-toggle:hover { background: #2d3748; }
+    .debug-body {
+      display: none;
+      background: #0f172a;
+      border-radius: var(--radius-xl);
+      border: 1px solid #1e3a5f;
+      padding: var(--space-4);
+      margin-top: var(--space-2);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+    .debug-body.open { display: block; }
+    .debug-title { font-size: var(--text-xs); font-weight: 700; color: #7dd3fc; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--space-3); font-family: monospace; }
+    .debug-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); margin-bottom: var(--space-3); }
+    .debug-item { background: #1e293b; border-radius: var(--radius-md); padding: var(--space-2) var(--space-3); }
+    .debug-item-label { font-size: 0.6rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; font-family: monospace; }
+    .debug-item-value { font-size: var(--text-xs); color: #e2e8f0; font-family: monospace; font-weight: 600; word-break: break-all; }
+    .debug-pre {
+      background: #1e293b;
+      border-radius: var(--radius-md);
+      padding: var(--space-3);
+      font-size: 0.65rem;
+      color: #94a3b8;
+      font-family: monospace;
+      overflow-x: auto;
+      max-height: 180px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .debug-pre-label { font-size: 0.6rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; font-family: monospace; margin-bottom: var(--space-1); margin-top: var(--space-3); }
+
+    /* =========================================================
+       FOOTER
+    ========================================================= */
+    .site-footer {
+      border-top: 1px solid var(--color-divider);
+      padding: var(--space-5);
+      text-align: center;
+      font-size: var(--text-xs);
+      color: var(--color-text-faint);
+    }
+
+    /* =========================================================
+       UTILITY
+    ========================================================= */
+    .hidden { display: none !important; }
+    .text-muted { color: var(--color-text-muted); }
+    .text-center { text-align: center; }
+    .mt-4 { margin-top: var(--space-4); }
+    .mt-6 { margin-top: var(--space-6); }
+    .mt-8 { margin-top: var(--space-8); }
+    .mb-4 { margin-bottom: var(--space-4); }
+    .mb-6 { margin-bottom: var(--space-6); }
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .gap-2 { gap: var(--space-2); }
+    .gap-3 { gap: var(--space-3); }
+    .fw-bold { font-weight: 700; }
+    .text-sm { font-size: var(--text-sm); }
+    .text-xs { font-size: var(--text-xs); }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .btn-row { flex-direction: column; }
+      .btn-row .btn { width: 100%; }
+      .scale-options { gap: var(--space-1); }
+      .scale-btn { width: 2.5rem; height: 2.5rem; }
+    }
+
+    /* Scenario count chip */
+    .scenario-count {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--color-text-muted);
+      background: var(--color-surface-offset);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-full);
+      padding: var(--space-1) var(--space-3);
+    }
+
+    /* Tag list for source types */
+    .source-type-hospital { background: #e8f3fb; color: #1a5f8a; border-color: #9ecfec; }
+    .source-type-research { background: var(--color-primary-highlight); color: var(--color-primary); border-color: var(--color-border); }
+    .source-type-government { background: var(--color-success-bg); color: var(--color-success); border-color: var(--color-success-border); }
+    .source-type-media { background: var(--color-surface-offset-2); color: var(--color-text-muted); border-color: var(--color-border); }
+    .source-type-unknown { background: var(--color-surface-offset-2); color: var(--color-text-faint); border-color: var(--color-border); }
+  </style>
+</head>
+<body>
+
+<div class="site-wrap">
+
+  <!-- ============================================================
+       HEADER
+  ============================================================ -->
+  <header class="site-header">
+    <div class="site-logo">
+      <!-- Inline SVG Logo -->
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-label="Study logo" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="32" rx="8" fill="var(--color-primary)" opacity="0.12"/>
+        <circle cx="16" cy="13" r="5.5" stroke="var(--color-primary)" stroke-width="2" fill="none"/>
+        <path d="M16 20v2M12 24h8" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M20 10.5C18.5 8.5 15 8 13 10" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <div class="site-logo-text">AI Health Information Study</div>
+        <div class="site-logo-sub">Research Prototype — Pilot Study</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="btn-icon" data-theme-toggle aria-label="Switch theme" title="Toggle dark/light mode">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       PROGRESS BAR
+  ============================================================ -->
+  <nav class="progress-bar-wrap" aria-label="Study progress">
+    <div class="progress-steps" id="progressSteps">
+      <!-- Injected by JS -->
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       MAIN CONTENT
+  ============================================================ -->
+  <main id="mainContent">
+
+    <!-- SECTION 1: WELCOME -->
+    <section class="study-section active" id="section-welcome" data-section-id="welcome" data-section-label="Welcome">
+      <div class="section-inner">
+        <div class="welcome-hero">
+          <div class="welcome-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            IRB-Approved Pilot Study
+          </div>
+          <h1 class="welcome-title">人們如何評估由人工智慧生成的健康摘要？</h1>
+          <p class="welcome-subtitle">您將閱讀一系列與健康相關的搜尋情境，並與人工智慧生成的摘要進行互動。沒有絕對的對錯之分——我們關注的是您發自內心的反應與判斷。</p>
+          <div class="welcome-meta">
+            <div class="welcome-meta-item">
+              <div class="welcome-meta-label">預估時間</div>
+              <div class="welcome-meta-value">10-15 分鐘</div>
+            </div>
+            <div class="welcome-meta-item">
+              <div class="welcome-meta-label">兩種情境</div>
+              <div class="welcome-meta-value" id="welcomeScenarioCount">低風險與高風險</div>
+            </div>
+            <div class="welcome-meta-item">
+              <div class="welcome-meta-label">研究型態</div>
+              <div class="welcome-meta-value">線上執行</div>
+            </div>
+            <div class="welcome-meta-item">
+              <div class="welcome-meta-label">資料處理</div>
+              <div class="welcome-meta-value">匿名</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-info mb-6">
+          <span class="alert-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+          <div class="alert-body">
+            <div class="alert-title">開始之前</div>
+            <div class="alert-text">請仔細閱讀每個情境。請根據您身為真實資訊搜尋者時自然會有的反應來作答。本研究旨在探討您的認知，而非您的醫學知識。</div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary btn-lg" id="welcomeStartBtn" onclick="Study.goToSection('consent')">
+            我們開始吧！
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: CONSENT -->
+    <section class="study-section" id="section-consent" data-section-id="consent" data-section-label="Consent">
+      <div class="section-inner">
+        <div class="section-eyebrow">Step 1 of 6</div>
+        <h2 class="section-title">知情同意書</h2>
+        <p class="section-lead">在同意參與之前，請仔細閱讀以下資訊。</p>
+
+        <div class="card mb-6">
+          <h3 class="card-title">研究目的</h3>
+          <p class="card-body">感謝您參與這項關於 AI 健康摘要的初步測試。本計畫旨在探討不同資訊介面如何影響使用者的判斷，這是一項非正式的 Pilot Study。本實驗不涉及任何醫療建議，收集的數據將採去識別化處理，僅用於介面優化與學術探討。</p>
+        </div>
+
+        <ul class="consent-items">
+          <li class="consent-item">
+            <span class="consent-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+            <span class="consent-item-text"><strong>匿名性:</strong> 您的參與是匿名的。我們不會收集或儲存任何可識別個人身分的資訊。</span>
+          </li>
+          <li class="consent-item">
+            <span class="consent-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+            <span class="consent-item-text"><strong>自願參與:</strong> 參與完全出於自願，您可以隨時退出，且不會受到任何處罰。</span>
+          </li>
+          <li class="consent-item">
+            <span class="consent-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+            <span class="consent-item-text"><strong>風險聲明:</strong> 目前未預見任何風險，但這些情境包含虛構的健康資訊，不應視為正式的醫療建議。</span>
+          </li>
+          <li class="consent-item">
+            <span class="consent-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+            <span class="consent-item-text"><strong>資料儲存:</strong> 所有資料均儲存於瀏覽器內部的記憶體中，僅會在研究結束時應研究需求進行匯出。任何資料均不會傳輸至任何外部資料儲存空間。</span>
+          </li>
+          <li class="consent-item">
+            <span class="consent-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5 19.79 19.79 0 0 1 1.61 5a2 2 0 0 1 2-2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+            <span class="consent-item-text"><strong>聯絡資訊:</strong> 若對本研究有任何疑問，請透過電子郵件 81315003E@ntnu.edu.tw 聯絡主要研究者</span>
+          </li>
+        </ul>
+
+        <div class="consent-checks">
+          <label class="checkbox-wrap">
+            <input type="checkbox" id="consent1" onchange="Study.updateConsentState()" />
+            <span class="checkbox-label">我已閱讀並了解上述研究資訊，並同意自願參與。 <span style="color:var(--color-error)">*</span></span>
+          </label>
+          <label class="checkbox-wrap">
+            <input type="checkbox" id="consent2" onchange="Study.updateConsentState()" />
+            <span class="checkbox-label">我了解這項研究僅會以匿名方式，在我的瀏覽器內收集互動資料。 <span style="color:var(--color-error)">*</span></span>
+          </label>
+          <label class="checkbox-wrap">
+            <input type="checkbox" id="consent3" onchange="Study.updateConsentState()" />
+            <span class="checkbox-label">本人確認已年滿 18 歲。 <span style="color:var(--color-error)">*</span></span>
+          </label>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="Study.goToSection('welcome')">返回</button>
+          <button class="btn btn-primary" id="consentNextBtn" disabled onclick="Study.goToSection('background')">
+            我同意 — 繼續
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: BACKGROUND + DHL -->
+    <section class="study-section" id="section-background" data-section-id="background" data-section-label="Background">
+      <div class="section-inner">
+        <div class="section-eyebrow">Step 2 of 6</div>
+        <h2 class="section-title">背景資訊</h2>
+        <p class="section-lead">請回答以下關於您自身的問題。所有回答均為匿名。</p>
+
+        <div class="question-list">
+
+          <div class="card">
+            <h3 class="card-title" style="font-size:var(--text-base)">背景資訊</h3>
+            <div class="form-group mt-4">
+              <label class="form-label" for="bg-age">年齡範圍 <span class="required">*</span></label>
+              <select class="form-input" id="bg-age" onchange="Study.logInput(this, 'background', 'bg-age', 'Age Range')">
+                <option value="">Select an option</option>
+                <option>18–24</option>
+                <option>25–34</option>
+                <option>35–44</option>
+                <option>45–54</option>
+                <option>55–64</option>
+                <option>65 or older</option>
+                <option>Prefer not to say</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="bg-edu">最高學歷 <span class="required">*</span></label>
+              <select class="form-input" id="bg-edu" onchange="Study.logInput(this, 'background', 'bg-edu', 'Education Level')">
+                <option value="">Select an option</option>
+                <option>高中或同等學歷</option>
+                <option>專科</option>
+                <option>大學</option>
+                <option>碩士</option>
+                <option>博士</option>
+                <option>其他</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="bg-field">Field of Study or Work</label>
+              <input type="text" class="form-input" id="bg-field" placeholder="[PLACEHOLDER: e.g., Healthcare, Engineering, Humanities…]" onchange="Study.logInput(this, 'background', 'bg-field', 'Field of Study')" />
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title" style="font-size:var(--text-base)">數位健康素養 (DHL)</h3>
+            <p class="card-body mb-4">請針對每項陳述，評定您的同意程度。（1 = 非常不同意，5 = 非常同意）</p>
+            <div id="dhlScales">
+              <!-- Injected by JS -->
+            </div>
+            <div class="alert alert-info" style="margin-top:var(--space-4)">
+              <span class="alert-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+              <div class="alert-body">
+                <div class="alert-text">請按照自己的想法填寫，該問卷無標準答案</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title" style="font-size:var(--text-base)">AI 使用經驗</h3>
+            <div class="scale-group mt-4">
+              <div class="scale-label"><span class="scale-label-text">您使用 AI 工具（例如 ChatGPT、Gemini）尋找健康資訊的頻率為何？</span></div>
+              <div class="radio-group">
+                <div class="radio-pill"><input type="radio" name="ai-freq" id="ai-freq-1" value="never" onchange="Study.logInput(this,'background','ai-freq','AI Use Frequency')"/><label for="ai-freq-1">從未</label></div>
+                <div class="radio-pill"><input type="radio" name="ai-freq" id="ai-freq-2" value="rarely" onchange="Study.logInput(this,'background','ai-freq','AI Use Frequency')"/><label for="ai-freq-2">很少</label></div>
+                <div class="radio-pill"><input type="radio" name="ai-freq" id="ai-freq-3" value="sometimes" onchange="Study.logInput(this,'background','ai-freq','AI Use Frequency')"/><label for="ai-freq-3">偶爾</label></div>
+                <div class="radio-pill"><input type="radio" name="ai-freq" id="ai-freq-4" value="often" onchange="Study.logInput(this,'background','ai-freq','AI Use Frequency')"/><label for="ai-freq-4">經常</label></div>
+                <div class="radio-pill"><input type="radio" name="ai-freq" id="ai-freq-5" value="very-often" onchange="Study.logInput(this,'background','ai-freq','AI Use Frequency')"/><label for="ai-freq-5">總是</label></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="Study.goToSection('consent')">返回</button>
+          <button class="btn btn-primary" onclick="Study.goToSection('tutorial')">
+            繼續
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: TUTORIAL -->
+    <section class="study-section" id="section-tutorial" data-section-id="tutorial" data-section-label="Tutorial">
+      <div class="section-inner">
+        <div class="section-eyebrow">Step 3 of 6</div>
+        <h2 class="section-title">這項研究如何進行</h2>
+        <p class="section-lead">在進入情境之前，先簡短說明一下您將會看到和執行的內容。</p>
+
+        <div class="card mb-6">
+          <div style="background:var(--color-surface-offset);border-radius:var(--radius-lg);padding:var(--space-4);margin-bottom:var(--space-4);display:flex;align-items:center;gap:var(--space-3);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span style="font-size:var(--text-sm);color:var(--color-text-muted)">這就是 <strong>「鎖定搜尋查詢」</strong> 的外觀 — 它模擬了已經輸入過關鍵字的 Google 搜尋列。</span>
+          </div>
+          <div class="search-bar">
+  <span class="search-bar-icon">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+  </span>
+  <span class="search-bar-text" id="search-query-text">瘦瘦針和減肥藥的比較</span> 
+  <span class="search-lock">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    </svg>
+    搜尋字詞已固定
+  </span>
+</div>
+        </div>
+
+        <div class="tutorial-steps">
+          <div class="tutorial-step">
+            <div class="tutorial-step-num">1</div>
+            <div class="tutorial-step-body">
+              <div class="tutorial-step-title">閱讀情境背景</div>
+              <div class="tutorial-step-text">每個情境都描述了一個簡短的醫療相關狀況。請仔細閱讀情境描述以了解背景，再查看 AI 摘要。</div>
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="tutorial-step-num">2</div>
+            <div class="tutorial-step-body">
+              <div class="tutorial-step-title">檢視 AI 生成的摘要</div>
+              <div class="tutorial-step-text">您將看到一個 AI 概覽的畫面，類似於 Google 等搜尋引擎目前所顯示的內容。請將其視為您在進行實際健康相關搜尋時所見的內容來閱讀。</div>
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="tutorial-step-num">3</div>
+            <div class="tutorial-step-body">
+              <div class="tutorial-step-title">探索來源（可選）</div>
+              <div class="tutorial-step-text">您也可以看到另一個畫面來源，列出了 AI 摘要所使用的資料。您可以展開每個來源來閱讀簡短的摘錄，您與來源的互動將被記錄。</div>
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="tutorial-step-num">4</div>
+            <div class="tutorial-step-body">
+              <div class="tutorial-step-title">評估您的看法</div>
+              <div class="tutorial-step-text">在閱讀每個情境後，請使用所提供的量表評估您的信任度、感知準確性、風險認知與其他判斷。此評估沒有正確答案。</div>
+            </div>
+          </div>
+          <div class="tutorial-step">
+            <div class="tutorial-step-num">5</div>
+            <div class="tutorial-step-body">
+              <div class="tutorial-step-title">採取行動按鈕</div>
+              <div class="tutorial-step-text">您會在每個情境下方看到操作按鈕（例如「檢視來源」、「我會採納這項建議」）。請點選最能反映您真實反應的選項——若沒有適用選項，則無需點選。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-warning mt-6">
+          <span class="alert-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+          <div class="alert-body">
+            <div class="alert-title">重要提醒</div>
+            <div class="alert-text">本研究中的健康情境均為虛構的示意案例。請勿將其中任何資訊視為真實的醫療建議。在做出健康相關決策時，請務必諮詢合格的醫療專業人員。</div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="Study.goToSection('background')">返回</button>
+          <button class="btn btn-primary" id="tutorialCompleteBtn" onclick="Study.startScenarios()">
+            開始實驗
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: SCENARIO (dynamically rendered) -->
+    <section class="study-section" id="section-scenario" data-section-id="scenario" data-section-label="Scenarios">
+      <div class="section-inner wide" id="scenarioContainer">
+        <!-- Injected by JS -->
+      </div>
+    </section>
+
+    <!-- SECTION 6: POST-TASK REFLECTION -->
+    <section class="study-section" id="section-reflection" data-section-id="reflection" data-section-label="Reflection">
+      <div class="section-inner">
+        <div class="section-eyebrow">Step 5 of 6</div>
+        <h2 class="section-title">任務完成後的反思</h2>
+        <p class="section-lead">現在您已完成所有情境，請回顧並反思您的整體體驗。</p>
+
+        <div class="reflection-cards">
+
+          <div class="card">
+            <h3 class="card-title" style="font-size:var(--text-base)">General AI Health Information Trust</h3>
+            <div id="reflectionScales">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title" style="font-size:var(--text-base)">開放式反思</h3>
+            <div class="form-group mt-4">
+              <label class="form-label" for="ref-q1">哪些因素最影響了你對 AI 生成摘要的信任度？</label>
+              <textarea class="form-input" id="ref-q1" rows="3" placeholder="ex:資料來源（醫療院所、網路KOL...等提供）、摘要撰寫風格" onchange="Study.logInput(this,'reflection','ref-q1','Trust factors')"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="ref-q2">有無提供來源是否改變了您對 AI 摘要的評估方式？請回答是或否</label>
+              <textarea class="form-input" id="ref-q2" rows="3" placeholder="ex:是 / 否" onchange="Study.logInput(this,'reflection','ref-q2','Source influence')"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="ref-q3">這些情境中有任何令人困惑或不清楚的地方嗎？有的話請說明</label>
+              <textarea class="form-input" id="ref-q3" rows="3" placeholder="ex:情境描述不清、摘要內容有誤等" onchange="Study.logInput(this,'reflection','ref-q3','Confusing elements')"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="ref-q4">有其他意見或建議嗎？（選填）</label>
+              <textarea class="form-input" id="ref-q4" rows="3" placeholder="ex:希望看到更多實際案例、摘要長度可以調整等" onchange="Study.logInput(this,'reflection','ref-q4','Additional comments')"></textarea>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="Study.goToSection('scenario')">返回</button>
+          <button class="btn btn-primary" onclick="Study.goToSection('debrief')">
+            繼續作答
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: DEBRIEF + EXPORT -->
+    <section class="study-section" id="section-debrief" data-section-id="debrief" data-section-label="Debrief">
+      <div class="section-inner">
+        <div class="section-eyebrow">Step 6 of 6 — Final Step</div>
+        <h2 class="section-title">完成測驗與資料上傳</h2>
+        <p class="section-lead">感謝您完成本次研究。請閱讀下方的研究說明，並協助我們將資料回傳。</p>
+
+        <div class="alert alert-success mb-6">
+          <span class="alert-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+          <div class="alert-body">
+            <div class="alert-title">測驗完成</div>
+            <div class="alert-text">您已成功完成全部 <span id="debriefScenarioCount">—</span> 個情境。非常感謝您的參與！</div>
+          </div>
+        </div>
+
+        <div class="card mb-6">
+          <h3 class="card-title">研究說明與感謝 (Study Debrief)</h3>
+          <p class="card-body">
+            非常感謝您抽出寶貴的時間參與本次測試！您的真實回饋對我們的研究有極大的幫助。<br><br>
+            在此，我們想向您進一步說明本專案的相關細節：<br><br>
+            • <strong>研究的真正目的：</strong>本研究的核心，其實是想探討「介面設計如何影響使用者的判斷」。我們想了解當 AI 生成的健康資訊具備不同的設計（例如：是否清楚標示資料來源、是否有安全警告提示）時，是否會影響您的信任度與對資訊風險的感知。為了捕捉您最自然的閱讀反應，我們在測試前並未向您透露這個介面比較的機制。<br><br>
+            • <strong>情境為虛構範例：</strong>我們必須向您澄清，您在剛剛的測驗中所閱讀到的「健康搜尋情境」與「AI 摘要內容」，都是為了本次實驗而特別編寫的虛構範例。請千萬不要將這些內容視為真實的醫療建議。在現實生活中遇到任何健康問題時，請務必尋求專業醫師的協助。<br><br>
+            • <strong>資料隱私與聯絡方式：</strong>您在本次測試中產生的所有操作數據（如點擊行為、問卷評分）均已完全去識別化，僅供學術探討與介面優化使用。<br><br>
+            若您對本研究有任何疑問，或想進一步了解研究細節，非常歡迎透過電子郵件與我們聯繫：[請填寫你的 Email 信箱]。
+          </p>
+          <div class="alert alert-info" style="margin-top:var(--space-5)">
+            <span class="alert-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+            <div class="alert-body">
+              <div class="alert-title">醫療免責聲明</div>
+              <div class="alert-text">再次提醒您，本測驗中的健康資訊僅為實驗示意用途。在現實生活中遇到任何健康或醫療問題時，請務必尋求專業醫師或醫療機構的協助。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mb-6" style="text-align: center; padding: 3rem 2rem; max-width: 600px; margin: 3rem auto;">
+          <div style="display: inline-flex; justify-content: center; align-items: center; width: 48px; height: 48px; background: var(--color-primary-highlight); color: var(--color-primary); border-radius: 50%; margin-bottom: 1rem;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          
+          <h3 class="card-title">上傳研究資料</h3>
+          <p class="text-muted text-sm mb-6">您已閱讀完畢所有說明！請點擊下方按鈕，將您的作答結果傳送至研究團隊。傳送完成後即可關閉網頁。</p>
+
+          <div id="submitArea">
+            <button class="btn btn-primary btn-lg" id="submitDataBtn" onclick="Study.submitData()" style="min-width: 240px; box-shadow: var(--shadow-md);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 8px;"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+              確認送出資料
+            </button>
+          </div>
+          
+          <div id="loadingArea" class="hidden">
+            <p style="color: var(--color-primary); font-weight: 600;">資料傳送中，請稍候...</p>
+          </div>
+          
+          <div id="successArea" class="hidden">
+            <div class="alert alert-success" style="justify-content: center; margin-bottom: 0; text-align: left;">
+              <strong>送出成功！再次感謝您的參與，您現在可以安全地關閉此網頁。</strong>
+            </div>
+          </div>
+          
+          <div id="errorArea" class="hidden" style="margin-top: var(--space-4);">
+            <p style="color: var(--color-error);">傳送失敗，請檢查網路連線後再試一次。</p>
+            <button class="btn btn-secondary btn-sm mt-4" onclick="Study.submitData()">重新傳送</button>
+          </div>
+        </div>
+
+        <div class="alert alert-info" style="max-width: 600px; margin: 0 auto;">
+          <span class="alert-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+          <div class="alert-body">
+            <div class="alert-text">受試者編號 (Participant ID): <strong id="debriefParticipantId">—</strong> &nbsp;|&nbsp; 測試組別: <strong id="debriefCondition">—</strong></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="site-footer">
+    AI Health Information Study — Research Prototype &nbsp;|&nbsp; Data processed in-browser only &nbsp;|&nbsp; No data is transmitted to any server
+  </footer>
+
+</div><!-- end site-wrap -->
+
+<!-- ============================================================
+     DEBUG PANEL
+============================================================ -->
+<div class="debug-panel" id="debugPanel">
+  <button class="debug-toggle" onclick="Study.toggleDebug()" id="debugToggleBtn">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+    Debug Panel
+  </button>
+  <div class="debug-body" id="debugBody">
+    <div class="debug-title">🔬 Researcher Debug Panel</div>
+    <div class="debug-grid" id="debugGrid">
+      <!-- Injected by JS -->
+    </div>
+    <div class="debug-pre-label">Last 5 Events</div>
+    <pre class="debug-pre" id="debugLog">–</pre>
+    <div class="debug-pre-label">In-Memory Snapshot</div>
+    <pre class="debug-pre" id="debugSnapshot">–</pre>
+    <div style="margin-top:var(--space-3);display:flex;gap:var(--space-2);">
+      <button class="btn btn-ghost btn-sm" style="color:#7dd3fc;font-size:0.65rem;" onclick="Study.refreshDebug()">↻ Refresh</button>
+      <button class="btn btn-ghost btn-sm" style="color:#f87171;font-size:0.65rem;" onclick="Study.exportJSON()">⬇ JSON</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+/* ==========================================================
+   SCENARIO DATA SCHEMA 
+========================================================== */
+const STUDY_CONFIG = {
+  studyTitle: "AI Health Information Study",
+  version: "1.0.0-pilot",
+  totalScenarios: 2,
+  conditions: {
+    A: { sourceTransparency: false, safetyCue: false, label: "Control" },
+    B: { sourceTransparency: true,  safetyCue: true,  label: "Treatment" }
+  }
+};
+
+// ---- SCENARIO DATA ----------------------------------------
+let SCENARIOS = [
+  // ----------------------------------------------------
+  // Case 1: 壓力管理 (作為範例練習)
+  // ----------------------------------------------------
+  {
+    scenarioId: "scenario_example", 
+    isExample: true,                
+    riskLevel: "low",
+    title: "壓力管理方法 (練習題)",
+    searchContext: {
+      title: "搜尋情境",
+      description: "您最近覺得工作與生活壓力較大，想在網路上尋找一些系統性的壓力管理指南與放鬆技巧。",
+      queryLabel: "搜尋字詞",
+      lockedQuery: "壓力管理 方法 系統性指南"
+    },
+    aiOverviewPanel: {
+      title: "AI 概覽",
+      summary: `壓力管理是透過應對策略減輕身心負擔，以維持健康與提升復原力的方法。有效方法包括：分析壓力源、調整看待壓力的思維（專注於能控制的事）、練習腹式呼吸、保持規律運動、定時休息、建立健康的生活習慣及尋求人際支持，從而將壓力轉化為動力。<span class="cite-tag" onclick="Study.actionViewSources('scenario_example')">維基百科 +3</span><br><br>
+      以下是系統性的壓力管理指南：<br><br>
+      <strong>1. 認知與評估：找出壓力來源</strong><br>
+      • 分析壓力源：確定哪些是可控的（如時間安排、工作方式），哪些是不可控的（如他人的意見、天氣）。<br>
+      • 調整思維：接受無法改變的事，勇氣改變能改變的，並分辨兩者。<br>
+      • 正向重塑：練習感激，減少負面能量。<span class="cite-tag" onclick="Study.actionViewSources('scenario_example')">維基百科 +2</span><br><br>
+      <strong>2. 行動管理：主動減壓</strong><br>
+      • 時間管理：找出表現最佳時段處理重要工作，並設定具體可達成的目標。<br>
+      • 學會說「不」：量力而為，避免過多承諾導致負荷過重。<br>
+      • 重疊工作：避免一次做太多事，休息一下能走更遠的路。<span class="cite-tag" onclick="Study.actionViewSources('scenario_example')">醫院管理局 +1</span><br><br>
+      <strong>3. 身心放鬆技巧</strong><br>
+      • 呼吸訓練：緩慢的腹式呼吸可有效放鬆神經系統。`,
+      note: "提示：若壓力持續影響睡眠或日常生活，建議尋求專業心理諮商協助。",
+      safetyCue: "本資訊僅供日常保健參考，無法取代專業心理治療或醫療診斷。"
+    },
+    sourcesPanel: {
+      title: "參考來源",
+      description: "以下為 AI 生成摘要所參考的原始文獻：",
+      sources: [
+        {
+          sourceId: "src_01_01",
+          sourceType: "unknown",
+          sourceLabel: "維基百科 - 壓力管理",
+          sourceSnippet: "壓力管理包含一系列控制個人壓力水平的技術與心理療法，旨在改善日常生活功能。",
+          sourceUrlPlaceholder: "#"
+        },
+        {
+          sourceId: "src_01_02",
+          sourceType: "government",
+          sourceLabel: "醫院管理局健康指南",
+          sourceSnippet: "主動減壓與時間管理是預防職場倦怠的核心策略，適當的休息能提高整體復原力。",
+          sourceUrlPlaceholder: "#"
+        }
+      ]
+    },
+    groundTruth: { expectedRiskLevel: "low", shouldVerify: false, notes: "低風險情境，主要測試受試者對一般健康指導的信任度。" }
+  },
+
+  // ----------------------------------------------------
+  // Case 2: 間歇性斷食
+  // ----------------------------------------------------
+  {
+    scenarioId: "scenario_02",
+    riskLevel: "low",
+    title: "間歇性斷食諮詢",
+    searchContext: {
+      title: "搜尋情境",
+      description: "您想了解最近流行的 168 斷食是否適合自己，以及它的減脂原理與相關注意事項。",
+      queryLabel: "搜尋字詞",
+      lockedQuery: "間歇性斷食 168 效果與注意事項"
+    },
+    aiOverviewPanel: {
+      title: "AI 概覽",
+      summary: `間歇性斷食（Intermittent Fasting, IF）是一種透過限制進食時間來改善健康和減重的飲食模式，非節食。最常見的是「168斷食」：每天禁食16小時，在8小時內進食。其原理是降低胰島素、消耗肝醣，進而燃燒脂肪。常見方法包含168、14/10、5:2斷食等。<span class="cite-tag" onclick="Study.actionViewSources('scenario_02')">銘傳大學 +4</span><br><br>
+      <strong>核心重點與好處</strong><br>
+      • 減脂原理：空腹超過12小時後，身體會從使用肝醣轉向燃燒體脂肪作為能量。<br>
+      • 增加身體修復：長時間空腹可讓身體處於飢餓狀態，促進新陳代謝並增加脂肪分解。<br>
+      • 改善代謝：幫助提升胰島素敏感度，改善體態管理。<br>
+      • 靈活性：只要在進食視窗內合理均衡飲食，不必嚴格節制卡路里。<span class="cite-tag" onclick="Study.actionViewSources('scenario_02')">womenshealth +5</span><br><br>
+      <strong>常見間歇性斷食類型</strong><br>
+      • 16/8 斷食法：16小時禁食，8小時進食（例如：中午12點至晚上8點）。<br>
+      • 14/10 斷食法：14小時不進食，適合初學者。<br>
+      • 5:2 斷食法：一週內5天正常吃，2天不連續的輕斷食日僅攝取 500-600 大卡。<br>
+      • 20/4 戰士餐：每天僅在4小時內進食，難度較高。<span class="cite-tag" onclick="Study.actionViewSources('scenario_02')">銘傳大學 +2</span><br><br>
+      <strong>執行注意事項與風險</strong><br>
+      • 斷食期間：只能喝水、無糖茶、黑咖啡，不能有熱量攝取。<br>
+      • 副作用：可能出現頭暈、疲倦、飢餓感或情緒不穩。<br>
+      • 適用人群：糖尿病患者、孕婦、低血糖、飲食失調者（如厭食症）不建議執行，慢性病患者需諮詢醫師。<br>
+      • 進食品質：進食期間非無限制暴食，仍應選擇營養豐富的食物，避免高糖加工食品。<span class="cite-tag" onclick="Study.actionViewSources('scenario_02')">维基百科 +4</span>`,
+      note: "注意：不同體質對斷食的反應不同，初學者建議從 14/10 溫和斷食開始嘗試。",
+      safetyCue: "糖尿病患者、孕婦或正在服用藥物的慢性病患者，執行斷食前請務必諮詢主治醫師。"
+    },
+    sourcesPanel: {
+      title: "參考來源",
+      description: "以下為 AI 生成摘要所參考的原始文獻：",
+      sources: [
+        {
+          sourceId: "src_02_01",
+          sourceType: "hospital",
+          sourceLabel: "銘傳大學衛保月刊",
+          sourceSnippet: "探討 168 斷食的生化原理，包含胰島素如何影響脂肪分解及常見的斷食方法比較。",
+          sourceUrlPlaceholder: "#"
+        },
+        {
+          sourceId: "src_02_02",
+          sourceType: "media",
+          sourceLabel: "Women's Health 專題報導",
+          sourceSnippet: "介紹間歇性斷食對代謝的幫助，並強調在進食視窗內應保持營養均衡。",
+          sourceUrlPlaceholder: "#"
+        }
+      ]
+    },
+    groundTruth: { expectedRiskLevel: "low", shouldVerify: false, notes: "一般飲食法查詢，風險較低。" }
+  },
+
+  // ----------------------------------------------------
+  // Case 3: 膳食纖維
+  // ----------------------------------------------------
+  {
+    scenarioId: "scenario_03",
+    riskLevel: "low",
+    title: "膳食纖維攝取",
+    searchContext: {
+      title: "搜尋情境",
+      description: "您有排便不順的困擾，想了解如何透過飲食增加膳食纖維的攝取量，以及哪些食物含量最高。",
+      queryLabel: "搜尋字詞",
+      lockedQuery: "膳食纖維 高纖食物 排行與來源"
+    },
+    aiOverviewPanel: {
+      title: "AI 概覽",
+      summary: `膳食纖維的優質食物來源主要包括植物性食物，如全穀雜糧（燕麥、糙米）、豆類（黑豆、毛豆）、蔬菜（牛蒡、秋葵、花椰菜、菇類）及水果（芭樂、奇異果、黑棗）。建議增加全穀物與蔬果攝取，以滿足每日所需。<span class="cite-tag" onclick="Study.actionViewSources('scenario_03')">台灣癌症基金會 +4</span><br><br>
+      <strong>以下是膳食纖維的具體食物來源與高纖排行：</strong><br><br>
+      <strong>1. 全穀雜糧類 (優質澱粉)</strong><br>
+      • 燕麥/燕麥片：富含水溶性纖維，具保健功效。<br>
+      • 糙米、全麥製品：含豐富非水溶性纖維。<br>
+      • 五穀米、薏仁、地瓜、芋頭、馬鈴薯(連皮)。<span class="cite-tag" onclick="Study.actionViewSources('scenario_03')">國泰綜合醫院 +4</span><br><br>
+      <strong>2. 蔬菜類 (高纖維)</strong><br>
+      • 高纖榜首：牛蒡（5.1g）、黃秋葵（3.7g）、黑木耳（7.4g）、紫色花椰菜（3.9g）。<br>
+      • 葉菜與莖菜：地瓜葉、芥蘭、菠菜、芹菜、蘆筍、花椰菜。<br>
+      • 菇藻類：草菇、香菇、金針菇。<span class="cite-tag" onclick="Study.actionViewSources('scenario_03')">VITABOX® +4</span><br><br>
+      <strong>3. 豆類與堅果種子 (強效纖維)</strong><br>
+      • 豆類：黑豆、毛豆、紅豆、花豆、綠豆。<br>
+      • 種子：奇亞籽（纖維含量極高）、黑芝麻、山粉圓。<br>
+      • 堅果：杏仁果、核桃、腰果。<span class="cite-tag" onclick="Study.actionViewSources('scenario_03')">大研生醫 +5</span><br><br>
+      <strong>4. 水果類 (膳食纖維加強)</strong><br>
+      • 高纖水果：芭樂（特別是土芭樂）、黑棗、無花果、奇異果、酪梨。<br>
+      • 帶皮水果：蘋果（連皮）、梨子（連皮）、柳丁、柑橘。<span class="cite-tag" onclick="Study.actionViewSources('scenario_03')">大研生醫 +3</span><br><br>
+      💡 <strong>如何增加膳食纖維攝取？</strong><br>
+      主食替換為糙米、餐餐至少攝取1-2份蔬菜、水果連皮吃，並多喝水以幫助纖維發揮潤腸作用。<span class="cite-tag" onclick="Study.actionViewSources('scenario_03')">成大醫院營養部</span>`,
+      note: "註：膳食纖維需搭配充足水分（每日至少1500-2000cc）才能有效促進腸道蠕動，否則可能導致便秘加重。",
+      safetyCue: "腸胃道剛動過手術或患有嚴重腸躁症者，請遵照醫師指示調整纖維攝取量。"
+    },
+    sourcesPanel: {
+      title: "參考來源",
+      description: "以下為 AI 生成摘要所參考的原始文獻：",
+      sources: [
+        {
+          sourceId: "src_03_01",
+          sourceType: "hospital",
+          sourceLabel: "國泰綜合醫院營養通訊",
+          sourceSnippet: "詳細列出了各類主食與蔬菜的膳食纖維含量，建議國人每日應攝取 25-35 克的膳食纖維。",
+          sourceUrlPlaceholder: "#"
+        },
+        {
+          sourceId: "src_03_02",
+          sourceType: "research",
+          sourceLabel: "台灣癌症基金會",
+          sourceSnippet: "高纖飲食能有效促進腸道蠕動，減少致癌物質在腸道停留的時間，預防大腸直腸癌。",
+          sourceUrlPlaceholder: "#"
+        }
+      ]
+    },
+    groundTruth: { expectedRiskLevel: "low", shouldVerify: false, notes: "營養衛教知識，無直接醫療風險。" }
+  },
+
+  // ----------------------------------------------------
+  // Case 4: 止痛藥副作用
+  // ----------------------------------------------------
+  {
+    scenarioId: "scenario_04",
+    riskLevel: "high",
+    title: "用藥安全：止痛藥",
+    searchContext: {
+      title: "搜尋情境",
+      description: "您最近因為經常頭痛而頻繁服用成藥，但擔心吃太多會傷肝或傷腎，因此想了解常見止痛藥的副作用及安全劑量。",
+      queryLabel: "搜尋字詞",
+      lockedQuery: "止痛藥 副作用 劑量 注意事項 傷腎"
+    },
+    aiOverviewPanel: {
+      title: "AI 概覽",
+      summary: `止痛藥副作用依成分而異，常見成分包括乙醯胺酚（如普拿疼）與非類固醇消炎止痛藥（NSAIDs）。乙醯胺酚過量易傷肝，每日上限 4000mg；NSAIDs（如布洛芬、阿斯匹靈）常見腸胃不適、胃潰瘍、傷腎及水腫。服用期間應避免飲酒，若出現黑便、嚴重皮疹應立即就醫。<span class="cite-tag" onclick="Study.actionViewSources('scenario_04')">高醫大附設醫院 +3</span><br><br>
+      <strong>兩大類常見止痛藥副作用與注意事項</strong><br>
+      <strong>乙醯胺酚類 (Acetaminophen, 如：普拿疼)</strong><br>
+      • 副作用：過量服用會損害肝臟，導致肝中毒，較少見但可能引起腎臟受損。<br>
+      • 注意事項：成人每日最高劑量為 4000mg，超過易引發急性肝中毒。服藥期間絕對避免飲酒，會提高肝臟受損風險。服用感冒藥或綜合感冒糖漿時需注意是否重複攝取成分。<br><br>
+      <strong>非類固醇消炎止痛藥 (NSAIDs, 如：布洛芬、阿斯匹靈、Naproxen)</strong><br>
+      • 副作用：腸胃不適、噁心、嘔吐、腹瀉、胃潰瘍、胃出血，長期使用可能導致腎功能損傷、下肢水腫。<br>
+      • 注意事項：建議飯後服用，以減少胃腸道不適。高齡者、高血壓、心衰竭或有慢性腎臟病患者需謹慎使用。若糞便呈黑色或異常出血，請立即停藥並就醫。<span class="cite-tag" onclick="Study.actionViewSources('scenario_04')">高醫大附設醫院 +4</span><br><br>
+      <strong>其它類別止痛藥</strong><br>
+      • 翠普登類 (Triptans, 用於偏頭痛)：可能出現潮紅、頸痛、胸悶。<br>
+      • 鴉片類 (Opioids, 管制藥)：常見副作用為便秘、嘔吐、嗜睡、呼吸抑制，長期使用可能產生依賴性。<span class="cite-tag" onclick="Study.actionViewSources('scenario_04')">高醫大附設醫院 +2</span><br><br>
+      <strong>止痛藥使用建議</strong><br>
+      • 不要長期服用：若疼痛持續，不應長期仰賴成藥，應尋求醫師治療。<br>
+      • 遵照劑量：勿因疼痛劇烈而一次吞下多顆，通常應間隔 4-6 小時。<br>
+      • 搭配溫開水：避免搭配酒精、茶或咖啡，以免影響藥效。<span class="cite-tag" onclick="Study.actionViewSources('scenario_04')">啟新診所 +1</span>`,
+      note: "止痛藥只能暫時緩解症狀，無法治療引起疼痛的根本原因。",
+      safetyCue: "本主題涉及藥物安全與潛在肝腎風險。若有慢性病、胃潰瘍史或疼痛持續，請務必尋求專業醫師診斷，切勿隨意增加劑量。"
+    },
+    sourcesPanel: {
+      title: "參考來源",
+      description: "以下為 AI 生成摘要所參考的原始文獻：",
+      sources: [
+        {
+          sourceId: "src_04_01",
+          sourceType: "hospital",
+          sourceLabel: "高雄醫學大學附設中和紀念醫院",
+          sourceSnippet: "詳細列舉了 Acetaminophen 與 NSAIDs 的藥理機制與副作用，並提醒肝腎功能不佳者的用藥風險。",
+          sourceUrlPlaceholder: "#"
+        },
+        {
+          sourceId: "src_04_02",
+          sourceType: "government",
+          sourceLabel: "衛生署藥物辦公室",
+          sourceSnippet: "公告常見非處方止痛藥的安全用量指引，警告民眾不可同時服用多種含乙醯胺酚的感冒糖漿。",
+          sourceUrlPlaceholder: "#"
+        }
+      ]
+    },
+    groundTruth: { expectedRiskLevel: "high", shouldVerify: true, notes: "高風險情境（用藥安全）。測試受試者是否會意識到藥物過量的危險性並選擇尋求專業醫療建議。" }
+  },
+
+  // ----------------------------------------------------
+  // Case 5: 乳癌飲食
+  // ----------------------------------------------------
+  {
+    scenarioId: "scenario_05",
+    riskLevel: "high",
+    title: "癌症術後飲食指導",
+    searchContext: {
+      title: "搜尋情境",
+      description: "您的家人最近剛確診乳癌，正在積極尋找日常飲食中需要絕對避免的「地雷食物」，希望能幫助她穩定病情。",
+      queryLabel: "搜尋字詞",
+      lockedQuery: "乳癌 飲食禁忌 避免食物 術後保養"
+    },
+    aiOverviewPanel: {
+      title: "AI 概覽",
+      summary: `乳癌最怕的食物是能造成身體慢性發炎、肥胖及擾亂荷爾蒙的類型，主要應避免高油脂加工食品、精製糖、紅肉/加工肉品、酒精及生食。高脂飲食會促進雌激素分泌，進而刺激癌細胞增生。建議採取地中海飲食，多攝取十字花科蔬菜與高纖食物以降低風險。<span class="cite-tag" onclick="Study.actionViewSources('scenario_05')">癌症問康健 +4</span><br><br>
+      <strong>乳癌應避開的 6 大類地雷食物</strong><br>
+      • 高油脂與飽和脂肪：動物性油脂（牛腩、三層肉）、牛油、豬油、反式脂肪（炸物、餅乾）。<br>
+      • 加工肉品及燒烤：香腸、培根、火腿等含亞硝酸鹽加工品，以及碳烤、油炸類食物，易產生多環胺致癌物。<br>
+      • 精製糖與加工食品：含糖飲料、甜點等。高糖導致肥胖與體內發炎。<br>
+      • 酒精飲料：飲酒會促進雌激素活性，增加復發風險。<br>
+      • 生食與未熟食物：生魚片、生菜、半熟蛋。治療期間免疫力低，生食易感染。<br>
+      • 醃漬食品：鹹菜、泡菜等高鹽食物。<span class="cite-tag" onclick="Study.actionViewSources('scenario_05')">癌症問康健 +4</span><br><br>
+      <strong>預防與抗癌的健康飲食原則</strong><br>
+      • 多吃十字花科蔬菜：高麗菜、花椰菜、小白菜、白蘿蔔（含吲哚、硫化素）。<br>
+      • 優質蛋白質與油脂：鯖魚、鮭魚、豆漿、豆腐、苦茶油、橄欖油。<br>
+      • 高纖維食物：糙米、燕麥、黑木耳、菇類。<br>
+      • 維持健康體重：BMI 控制在 18.5 到 24 之間。<span class="cite-tag" onclick="Study.actionViewSources('scenario_05')">癌症問康健</span><br><br>
+      建議諮詢專業營養師與醫師，根據個人病情調整飲食。<span class="cite-tag" onclick="Study.actionViewSources('scenario_05')">www.crm.org.tw</span>`,
+      note: "癌症治療期間的營養需求依個人治療階段（如化療、放療）會有所不同。",
+      safetyCue: "癌症患者的飲食規劃攸關治療成效與免疫力。網路資訊無法取代專業醫療建議，請務必與主治醫師及腫瘤專科營養師討論您的飲食計畫。"
+    },
+    sourcesPanel: {
+      title: "參考來源",
+      description: "以下為 AI 生成摘要所參考的原始文獻：",
+      sources: [
+        {
+          sourceId: "src_05_01",
+          sourceType: "media",
+          sourceLabel: "癌症問康健",
+          sourceSnippet: "詳細列舉了乳癌患者應避免的高脂與高糖飲食，指出這些食物會加劇體內發炎反應並影響荷爾蒙。",
+          sourceUrlPlaceholder: "#"
+        },
+        {
+          sourceId: "src_05_02",
+          sourceType: "research",
+          sourceLabel: "財團法人乳癌防治基金會",
+          sourceSnippet: "建議乳癌患者採取地中海飲食法，強調治療期間避免生食以防細菌感染危及免疫系統。",
+          sourceUrlPlaceholder: "#"
+        }
+      ]
+    },
+    groundTruth: { expectedRiskLevel: "high", shouldVerify: true, notes: "高風險情境（癌症健康管理）。網路資訊可能造成病患營養不均或做出錯誤醫療決策，應強烈傾向尋求專業意見。" }
+  }
+];
+
+// DHL Survey Items
+const DHL_ITEMS = [
+  { id: "dhl_1", text: "我知道如何在網路上找到有幫助的健康資源。", key: "dhl_find" },
+  { id: "dhl_2", text: "我能夠透過網路查找資訊，藉此了解健康問題或疾病。", key: "dhl_evaluate" },
+  { id: "dhl_3", text: "我對在網路上找到由醫師、醫療機構、民間習俗提供的醫療保健資訊感到有信心。", key: "dhl_confidence" },
+  { id: "dhl_4", text: "我能判斷在網路上找到的健康資訊是否準確。", key: "dhl_judge" }
+];
+
+// Reflection items
+const REFLECTION_ITEMS = [
+  { id: "ref_trust_overall", text: "整體而言，您有多信任這類 AI 生成的健康摘要？", ends: ["完全不信任", "完全信任"] },
+  { id: "ref_accuracy_overall", text: "您認為 AI 健康摘要整體的準確度如何？", ends: ["非常不準確", "非常準確"] },
+  { id: "ref_risk_ai", text: "您認為在未經驗證的情況下，聽從 AI 摘要的健康建議有多危險？", ends: ["完全不危險", "極度危險"] },
+  { id: "ref_future_use", text: "未來遇到健康問題時，您有多大的意願會使用 AI 來尋找健康摘要？", ends: ["非常不願意", "非常願意"] }
+];
+
+/* ==========================================================
+   IN-MEMORY STATE
+========================================================== */
+const State = {
+  participantId: generateId("P"),
+  sessionId: generateId("S"),
+  conditionId: null,
+  currentSectionId: "welcome",
+  currentScenarioIndex: 0,
+  sessionStartTime: Date.now(),
+  debugOpen: false,
+
+  participantData: {
+    participantId: null,
+    sessionId: null,
+    conditionId: null,
+    background: {},
+    consentTimestamp: null
+  },
+
+  scenarioResponses: [],
+  interactionLogs: [],
+  scenarioMetrics: {},
+
+  _scenarioEnterTime: null,
+  _scenarioFirstClick: null,
+  _scenarioFirstClickTarget: null,
+  _scenarioSourceOpened: false,
+  _scenarioSourceClickCount: 0,
+  _scenarioWarnExpands: 0,
+  _scenarioVerifyClicked: false,
+  _scenarioFollowClicked: false,
+  _scenarioMaxScrollPct: 0,
+  _scenarioFirstSourceClickTime: null
+};
+
+function generateId(prefix) {
+  return prefix + "_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 7);
+}
+
+/* ==========================================================
+   LOGGING ENGINE
+========================================================== */
+const Logger = {
+  _startTime: Date.now(),
+
+  log(eventType, opts = {}) {
+    const now = Date.now();
+    const entry = {
+      participantId: State.participantId,
+      sessionId: State.sessionId,
+      conditionId: State.conditionId || "unassigned",
+      scenarioId: opts.scenarioId || (State.currentScenarioIndex < SCENARIOS.length ? SCENARIOS[State.currentScenarioIndex].scenarioId : "none"),
+      sectionId: opts.sectionId || State.currentSectionId,
+      eventType,
+      targetId: opts.targetId || null,
+      targetLabel: opts.targetLabel || null,
+      value: opts.value !== undefined ? opts.value : null,
+      timestamp: new Date(now).toISOString(),
+      relativeTimeMs: now - this._startTime
+    };
+    State.interactionLogs.push(entry);
+
+    if (State.currentSectionId === "scenario") {
+      this._updateScenarioMetrics(eventType, opts, now);
+    }
+    return entry;
+  },
+
+  _updateScenarioMetrics(eventType, opts, now) {
+    if (!State._scenarioEnterTime) return;
+    const scenarioId = SCENARIOS[State.currentScenarioIndex]?.scenarioId;
+    if (!scenarioId) return;
+    if (!State.scenarioMetrics[scenarioId]) this._initMetrics(scenarioId);
+    const m = State.scenarioMetrics[scenarioId];
+
+    if (!m.firstClickTarget && (eventType === "button_click" || eventType === "source_click" || eventType === "panel_expand")) {
+      m.firstClickTarget = opts.targetId || opts.targetLabel || eventType;
+      m.firstClickLatencyMs = now - State._scenarioEnterTime;
+    }
+    if (eventType === "source_click") {
+      m.sourceClickCount++;
+      m.sourcePanelOpened = true;
+      if (!m.timeToFirstSourceClickMs) {
+        m.timeToFirstSourceClickMs = now - State._scenarioEnterTime;
+      }
+    }
+    if (eventType === "panel_expand" && opts.targetId && opts.targetId.includes("source")) m.sourcePanelOpened = true;
+    if (eventType === "warning_click") m.warnExpandCount++;
+    if (eventType === "button_click" && opts.targetId === "verify_btn") m.verifyClicked = true;
+    if (eventType === "button_click" && opts.targetId === "follow_btn") m.followAdviceClicked = true;
+    if (eventType === "scroll_depth_update" && opts.value) m.maxScrollDepthPct = Math.max(m.maxScrollDepthPct, opts.value);
+  },
+
+  _initMetrics(scenarioId) {
+    State.scenarioMetrics[scenarioId] = {
+      scenarioId,
+      enterTimestamp: new Date(State._scenarioEnterTime).toISOString(),
+      exitTimestamp: null,
+      totalDwellMs: null,
+      firstClickTarget: null,
+      firstClickLatencyMs: null,
+      sourcePanelOpened: false,
+      sourceClickCount: 0,
+      warnExpandCount: 0,
+      verifyClicked: false,
+      followAdviceClicked: false,
+      maxScrollDepthPct: 0,
+      timeToFirstSourceClickMs: null
+    };
+  },
+
+  scenarioEnter(scenarioId) {
+    State._scenarioEnterTime = Date.now();
+    if (!State.scenarioMetrics[scenarioId]) this._initMetrics(scenarioId);
+    this.log("scenario_start", { scenarioId, targetLabel: "Scenario enter" });
+  },
+
+  scenarioExit(scenarioId) {
+    const now = Date.now();
+    if (State.scenarioMetrics[scenarioId]) {
+      State.scenarioMetrics[scenarioId].exitTimestamp = new Date(now).toISOString();
+      State.scenarioMetrics[scenarioId].totalDwellMs = now - State._scenarioEnterTime;
+    }
+    this.log("scenario_submit", { scenarioId, targetLabel: "Scenario exit" });
+    State._scenarioEnterTime = null;
+  }
+};
+
+/* ==========================================================
+   PROGRESS BAR
+========================================================== */
+const SECTIONS_ORDER = ["welcome", "consent", "background", "tutorial", "scenario", "reflection", "debrief"];
+const SECTIONS_LABELS = {
+  welcome: "Welcome",
+  consent: "Consent",
+  background: "Background",
+  tutorial: "Tutorial",
+  scenario: "Scenarios",
+  reflection: "Reflection",
+  debrief: "Debrief"
+};
+
+function buildProgressBar() {
+  const wrap = document.getElementById("progressSteps");
+  wrap.innerHTML = "";
+  SECTIONS_ORDER.forEach((id, i) => {
+    const step = document.createElement("div");
+    step.className = "progress-step";
+    step.id = "progress_" + id;
+    step.innerHTML = `<button class="progress-step-btn" tabindex="-1" aria-label="${SECTIONS_LABELS[id]}">
+      <div class="progress-step-dot">${i + 1}</div>
+      <div class="progress-step-label">${SECTIONS_LABELS[id]}</div>
+    </button>`;
+    wrap.appendChild(step);
+
+    if (i < SECTIONS_ORDER.length - 1) {
+      const conn = document.createElement("div");
+      conn.className = "progress-connector";
+      conn.id = "connector_" + id;
+      wrap.appendChild(conn);
+    }
+  });
+}
+
+function updateProgressBar(activeSectionId) {
+  const activeIdx = SECTIONS_ORDER.indexOf(activeSectionId);
+  SECTIONS_ORDER.forEach((id, i) => {
+    const el = document.getElementById("progress_" + id);
+    if (!el) return;
+    el.classList.remove("active", "done");
+    if (i < activeIdx) el.classList.add("done");
+    else if (i === activeIdx) el.classList.add("active");
+
+    const conn = document.getElementById("connector_" + id);
+    if (conn) {
+      conn.classList.toggle("done", i < activeIdx);
+    }
+  });
+}
+
+/* ==========================================================
+   SECTION NAVIGATION
+========================================================== */
+const Study = {
+
+  goToSection(sectionId) {
+    const prev = State.currentSectionId;
+    document.querySelectorAll(".study-section").forEach(s => s.classList.remove("active"));
+    const target = document.getElementById("section-" + sectionId);
+    if (target) {
+      target.classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    State.currentSectionId = sectionId;
+    updateProgressBar(sectionId);
+    Logger.log("section_view", { sectionId, targetLabel: sectionId });
+
+    if (sectionId === "debrief") {
+      document.getElementById("debriefParticipantId").textContent = State.participantId;
+      document.getElementById("debriefSessionId").textContent = State.sessionId;
+      document.getElementById("debriefCondition").textContent = State.conditionId || "unassigned";
+      document.getElementById("debriefScenarioCount").textContent = "3";
+      Logger.log("study_complete", { targetLabel: "Study complete" });
+    }
+    this.refreshDebug();
+  },
+
+  updateConsentState() {
+    const c1 = document.getElementById("consent1").checked;
+    const c2 = document.getElementById("consent2").checked;
+    const c3 = document.getElementById("consent3").checked;
+    const btn = document.getElementById("consentNextBtn");
+    btn.disabled = !(c1 && c2 && c3);
+    Logger.log("consent_checked", { sectionId: "consent", targetLabel: "Consent checkbox", value: c1 && c2 && c3 });
+    if (c1 && c2 && c3) {
+      State.participantData.consentTimestamp = new Date().toISOString();
+      State.participantData.participantId = State.participantId;
+      State.participantData.sessionId = State.sessionId;
+    }
+  },
+
+  logInput(el, sectionId, targetId, targetLabel) {
+    Logger.log("input_change", { sectionId, targetId, targetLabel, value: el.value });
+    if (sectionId === "background") {
+      State.participantData.background[targetId] = el.value;
+    }
+  },
+
+  startScenarios() {
+    Logger.log("tutorial_complete", { sectionId: "tutorial", targetLabel: "Tutorial complete" });
+    
+    // 1. 隨機分配實驗 Condition (A 組或 B 組)
+    const conditions = Object.keys(STUDY_CONFIG.conditions);
+    State.conditionId = conditions[Math.floor(Math.random() * conditions.length)];
+    State.participantData.conditionId = State.conditionId;
+
+    // ==========================================
+    // 2. 隨機抽題與洗牌邏輯
+    // ==========================================
+    const exampleScenario = SCENARIOS.find(s => s.isExample);
+    const lowRiskPool = SCENARIOS.filter(s => !s.isExample && s.riskLevel === "low");
+    const highRiskPool = SCENARIOS.filter(s => !s.isExample && s.riskLevel === "high");
+
+    const randomLow = lowRiskPool[Math.floor(Math.random() * lowRiskPool.length)];
+    const randomHigh = highRiskPool[Math.floor(Math.random() * highRiskPool.length)];
+
+    let testScenarios = [randomLow, randomHigh].filter(Boolean);
+    testScenarios.sort(() => Math.random() - 0.5);
+
+    SCENARIOS = [exampleScenario, ...testScenarios].filter(Boolean);
+    // ==========================================
+
+    State.currentScenarioIndex = 0;
+    this.renderScenario(0);
+    this.goToSection("scenario");
+  },
+
+  renderScenario(index) {
+    const scenario = SCENARIOS[index];
+    const condition = STUDY_CONFIG.conditions[State.conditionId] || STUDY_CONFIG.conditions.A;
+    const container = document.getElementById("scenarioContainer");
+
+    container.innerHTML = buildScenarioHTML(scenario, index, SCENARIOS.length, condition);
+    Logger.scenarioEnter(scenario.scenarioId);
+    this.refreshDebug();
+
+    const section = document.getElementById("section-scenario");
+    const scrollHandler = () => {
+      const pct = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+      Logger.log("scroll_depth_update", { scenarioId: scenario.scenarioId, value: pct });
+    };
+    window.addEventListener("scroll", scrollHandler, { passive: true });
+  },
+
+  nextScenario() {
+    const current = SCENARIOS[State.currentScenarioIndex];
+    const responseObj = collectScenarioResponse(current.scenarioId);
+    State.scenarioResponses.push(responseObj);
+    Logger.scenarioExit(current.scenarioId);
+
+    State.currentScenarioIndex++;
+    if (State.currentScenarioIndex < SCENARIOS.length) {
+      this.renderScenario(State.currentScenarioIndex);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      this.goToSection("reflection");
+    }
+  },
+
+  actionViewSources(scenarioId) {
+    Logger.log("button_click", { scenarioId, targetId: "view_sources_btn", targetLabel: "View Sources" });
+    const panel = document.getElementById("sourcesAccordion_" + scenarioId);
+    if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  },
+
+  actionVerify(scenarioId) {
+    Logger.log("button_click", { scenarioId, targetId: "verify_btn", targetLabel: "Verify with other sources" });
+    if (State.scenarioMetrics[scenarioId]) State.scenarioMetrics[scenarioId].verifyClicked = true;
+  },
+
+  actionFollowAdvice(scenarioId) {
+    Logger.log("button_click", { scenarioId, targetId: "follow_btn", targetLabel: "I would follow this advice" });
+    if (State.scenarioMetrics[scenarioId]) State.scenarioMetrics[scenarioId].followAdviceClicked = true;
+  },
+
+  toggleSource(sourceId, scenarioId) {
+    const el = document.getElementById("expand_" + sourceId);
+    const isOpen = el.classList.contains("open");
+    el.classList.toggle("open");
+    Logger.log(isOpen ? "panel_collapse" : "panel_expand", { scenarioId, targetId: sourceId, targetLabel: "Source panel" });
+    if (!isOpen) {
+      Logger.log("source_click", { scenarioId, targetId: sourceId, targetLabel: "Source opened" });
+    }
+  },
+
+  toggleSafetyCue(scenarioId) {
+    Logger.log("warning_click", { scenarioId, targetId: "safety_cue_" + scenarioId, targetLabel: "Safety cue clicked" });
+    if (State.scenarioMetrics[scenarioId]) State.scenarioMetrics[scenarioId].warnExpandCount++;
+  },
+
+  toggleDebug() {
+    State.debugOpen = !State.debugOpen;
+    document.getElementById("debugBody").classList.toggle("open", State.debugOpen);
+    this.refreshDebug();
+  },
+
+  refreshDebug() {
+    if (!State.debugOpen) return;
+    const current = SCENARIOS[State.currentScenarioIndex];
+    const m = current ? State.scenarioMetrics[current.scenarioId] : null;
+    document.getElementById("debugGrid").innerHTML = `
+      <div class="debug-item"><div class="debug-item-label">Participant ID</div><div class="debug-item-value">${State.participantId}</div></div>
+      <div class="debug-item"><div class="debug-item-label">Session ID</div><div class="debug-item-value">${State.sessionId}</div></div>
+      <div class="debug-item"><div class="debug-item-label">Condition</div><div class="debug-item-value">${State.conditionId || "—"}</div></div>
+      <div class="debug-item"><div class="debug-item-label">Section</div><div class="debug-item-value">${State.currentSectionId}</div></div>
+      <div class="debug-item"><div class="debug-item-label">Scenario Index</div><div class="debug-item-value">${State.currentScenarioIndex + 1} / ${SCENARIOS.length}</div></div>
+      <div class="debug-item"><div class="debug-item-label">Event Count</div><div class="debug-item-value">${State.interactionLogs.length}</div></div>
+      <div class="debug-item"><div class="debug-item-label">Source Clicks</div><div class="debug-item-value">${m ? m.sourceClickCount : "—"}</div></div>
+      <div class="debug-item"><div class="debug-item-label">Dwell (ms)</div><div class="debug-item-value">${m && m.totalDwellMs ? m.totalDwellMs : "active"}</div></div>
+    `;
+    const last5 = State.interactionLogs.slice(-5).map(e => `[${e.eventType}] ${e.targetLabel || ""} @${e.relativeTimeMs}ms`).join("\n");
+    document.getElementById("debugLog").textContent = last5 || "—";
+    const snapshot = {
+      participantId: State.participantId,
+      conditionId: State.conditionId,
+      responsesCount: State.scenarioResponses.length,
+      logsCount: State.interactionLogs.length,
+      currentScenario: current?.scenarioId || "none",
+      metrics: m || {}
+    };
+    document.getElementById("debugSnapshot").textContent = JSON.stringify(snapshot, null, 2);
+  },
+
+  exportJSON() {
+    Logger.log("export_json", { targetLabel: "Full JSON export" });
+    const payload = buildExportPayload();
+    downloadBlob(JSON.stringify(payload, null, 2), "application/json", `study_export_${State.participantId}.json`);
+  },
+
+  exportResponsesCSV() {
+    Logger.log("export_csv", { targetLabel: "Scenario responses CSV" });
+    const csv = buildResponsesCSV();
+    downloadBlob(csv, "text/csv", `scenario_responses_${State.participantId}.csv`);
+  },
+
+  exportLogsCSV() {
+    Logger.log("export_csv", { targetLabel: "Interaction logs CSV" });
+    const csv = buildLogsCSV();
+    downloadBlob(csv, "text/csv", `interaction_logs_${State.participantId}.csv`);
+  }, // 確保這裡有一個逗號
+
+  // === 請把這整段貼在下方 ===
+  submitData() {
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwyFg8S2zu3_fhaWlFLgBM7Xjtn9tta-hdD50nyrTS8wAsa-vX3ZKjawhrKM7BNUqIYDA/exec"; 
+
+    // 切換 UI 狀態
+    document.getElementById("submitArea").classList.add("hidden");
+    document.getElementById("errorArea").classList.add("hidden");
+    document.getElementById("loadingArea").classList.remove("hidden");
+
+    // 打包資料
+    const payload = buildExportPayload();
+
+    // 傳送資料
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      document.getElementById("loadingArea").classList.add("hidden");
+      document.getElementById("successArea").classList.remove("hidden");
+      Logger.log("data_submitted", { targetLabel: "Data submitted to server" });
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      document.getElementById("loadingArea").classList.add("hidden");
+      document.getElementById("errorArea").classList.remove("hidden");
+    });
+  }
+  // === 貼上結束 ===
+};
+
+/* ==========================================================
+   SCENARIO HTML BUILDER
+========================================================== */
+function buildScenarioHTML(scenario, index, total, condition) {
+  const realTotal = SCENARIOS.filter(s => !s.isExample).length;
+  let realIndex = 0;
+  for (let i = 0; i <= index; i++) {
+    if (!SCENARIOS[i].isExample) realIndex++;
+  }
+
+  const riskBadge = scenario.riskLevel === "high"
+    ? `<span class="badge badge-warning">高風險</span>`
+    : `<span class="badge badge-low">低風險</span>`;
+
+  const progressBadge = scenario.isExample
+    ? `<span class="badge badge-neutral" style="background:#fef08a;color:#854d0e;border-color:#facc15;">💡 範例情境 (不計分)</span>`
+    : `<span class="badge badge-neutral">正式測驗 ${realIndex} / ${realTotal}</span>`;
+
+  const sourceTypeClass = {
+    hospital: "source-type-hospital",
+    research: "source-type-research",
+    government: "source-type-government",
+    media: "source-type-media",
+    unknown: "source-type-unknown"
+  };
+
+  const sourcesInner = condition.sourceTransparency
+    ? scenario.sourcesPanel.sources.map(src => `
+      <div class="source-card" id="sourceCard_${src.sourceId}">
+        <button class="source-card-btn" onclick="Study.toggleSource('${src.sourceId}', '${scenario.scenarioId}')" aria-expanded="false" id="sourceBtn_${src.sourceId}">
+          <span class="source-type-badge ${sourceTypeClass[src.sourceType] || ''}">${src.sourceType}</span>
+          <div class="source-card-info">
+            <div class="source-label">${src.sourceLabel}</div>
+            <div class="source-snippet">${src.sourceSnippet}</div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--color-text-faint)"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="source-expand" id="expand_${src.sourceId}">
+          <strong style="display:block;margin-bottom:var(--space-1);font-size:var(--text-xs)">完整內容摘要：</strong>
+          ${src.sourceSnippet}<br><br>
+          <a href="${src.sourceUrlPlaceholder}" style="font-size:var(--text-xs);color:var(--color-primary);" onclick="Study.toggleSource('${src.sourceId}','${scenario.scenarioId}')" target="_blank">[模擬外部原文連結]</a>
+        </div>
+      </div>`).join("")
+    : `<div class="sources-hidden visible"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto var(--space-2);color:var(--color-text-faint)"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><div>根據系統設定，此情境不顯示資料來源。</div></div>`;
+
+  const safetyCueClass = condition.safetyCue ? "safety-cue visible" : "safety-cue";
+
+  const scaleItems = [
+    { id: "trust", label: "您有多信任這份 AI 生成的健康摘要？", ends: ["完全不信任", "完全信任"] },
+    { id: "accuracy", label: "您認為這份 AI 摘要的準確度如何？", ends: ["非常不準確", "非常準確"] },
+    { id: "risk", label: "您認為這個健康情況的風險程度多高？", ends: ["完全沒風險", "極度高風險"] },
+    { id: "verify_intention", label: "您有多大的意願會尋找其他來源來驗證這份資訊？", ends: ["非常不願意", "非常願意"] },
+    { id: "accept_intention", label: "您有多大的意願會接受並遵從這份資訊的建議？", ends: ["非常不願意", "非常願意"] },
+    { id: "confidence", label: "您對自己針對這份摘要所做的判斷有多大的信心？", ends: ["完全沒信心", "非常有信心"] }
+  ].map(item => buildScaleHTML(`${scenario.scenarioId}_${item.id}`, item.label, item.ends, scenario.scenarioId)).join("");
+
+  return `
+    <div class="scenario-header">
+      <div class="scenario-meta">
+        ${riskBadge}
+        ${progressBadge}
+        <span class="badge badge-primary">${scenario.title}</span>
+      </div>
+      <span class="scenario-count">${scenario.scenarioId}</span>
+    </div>
+
+    <div class="scenario-panels" id="scenarioPanels_${scenario.scenarioId}">
+
+      <div class="panel panel-search-context" id="panelSearch_${scenario.scenarioId}">
+        <div class="panel-header">
+          <div class="panel-header-left">
+            <svg class="panel-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span class="panel-title">${scenario.searchContext.title}</span>
+          </div>
+        </div>
+        <div class="panel-body">
+          <p class="search-scenario-desc">${scenario.searchContext.description}</p>
+          <div class="search-bar-label">${scenario.searchContext.queryLabel}</div>
+          <div class="search-bar">
+            <span class="search-bar-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+            <span class="search-bar-text" id="search-query-text">${scenario.searchContext.lockedQuery}</span>
+            <span class="search-lock">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              搜尋字詞已固定
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-ai-overview" id="panelAI_${scenario.scenarioId}">
+        <div class="panel-header">
+          <div class="panel-header-left">
+            <svg class="panel-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><circle cx="19" cy="5" r="3" fill="currentColor" opacity="0.5"/></svg>
+            <span class="panel-title">${scenario.aiOverviewPanel.title}</span>
+          </div>
+          <span class="badge badge-neutral" style="font-size:0.6rem;">AI 生成摘要</span>
+        </div>
+        <div class="panel-body ai-overview-content ${condition.sourceTransparency ? '' : 'hide-cites'}">
+          <p class="ai-summary-text">${scenario.aiOverviewPanel.summary}</p>
+          ${scenario.aiOverviewPanel.note ? `<div class="ai-note">${scenario.aiOverviewPanel.note}</div>` : ""}
+          <div class="${safetyCueClass}" id="safetyCue_${scenario.scenarioId}" onclick="Study.toggleSafetyCue('${scenario.scenarioId}')">
+            <span class="safety-cue-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+            <span class="safety-cue-text"><strong>安全提示：</strong> ${scenario.aiOverviewPanel.safetyCue}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-sources" id="panelSources_${scenario.scenarioId}">
+        <div class="panel-header">
+          <div class="panel-header-left">
+            <svg class="panel-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span class="panel-title">${scenario.sourcesPanel.title}</span>
+          </div>
+          <span class="badge badge-neutral">${condition.sourceTransparency ? scenario.sourcesPanel.sources.length + " 個來源" : "已隱藏"}</span>
+        </div>
+        <div class="panel-body" id="sourcesAccordion_${scenario.scenarioId}">
+          ${scenario.sourcesPanel.description ? `<p class="sources-desc">${scenario.sourcesPanel.description}</p>` : ""}
+          <div class="sources-list">
+            ${sourcesInner}
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="response-area" id="responseArea_${scenario.scenarioId}">
+      <div class="response-area-header">
+        <div class="response-area-title">您的評分與判斷</div>
+      </div>
+      <div class="response-area-body">
+        ${scaleItems}
+
+        <div class="judgment-group">
+          <div class="judgment-label">整體風險判斷 <span style="color:var(--color-error);font-weight:400;font-size:var(--text-xs)">必填</span></div>
+          <div class="radio-group">
+            <div class="radio-pill"><input type="radio" name="${scenario.scenarioId}_judgment" id="${scenario.scenarioId}_safe" value="safe" onchange="Study.logInput(this,'scenario','${scenario.scenarioId}_judgment','Risk judgment')"/><label for="${scenario.scenarioId}_safe">✓ 安全</label></div>
+            <div class="radio-pill"><input type="radio" name="${scenario.scenarioId}_judgment" id="${scenario.scenarioId}_unsafe" value="unsafe" onchange="Study.logInput(this,'scenario','${scenario.scenarioId}_judgment','Risk judgment')"/><label for="${scenario.scenarioId}_unsafe">⚠ 不安全</label></div>
+            <div class="radio-pill"><input type="radio" name="${scenario.scenarioId}_judgment" id="${scenario.scenarioId}_unsure" value="unsure" onchange="Study.logInput(this,'scenario','${scenario.scenarioId}_judgment','Risk judgment')"/><label for="${scenario.scenarioId}_unsure">? 不確定</label></div>
+          </div>
+        </div>
+
+        <div class="judgment-group">
+          <div class="judgment-label">您認為這項資訊需要尋求專業人員（如醫師）驗證嗎？</div>
+          <div class="radio-group">
+            <div class="radio-pill"><input type="radio" name="${scenario.scenarioId}_verify" id="${scenario.scenarioId}_verify_yes" value="yes" onchange="Study.logInput(this,'scenario','${scenario.scenarioId}_verify','Professional verification needed')"/><label for="${scenario.scenarioId}_verify_yes">是 — 需要諮詢專業人員</label></div>
+            <div class="radio-pill"><input type="radio" name="${scenario.scenarioId}_verify" id="${scenario.scenarioId}_verify_no" value="no" onchange="Study.logInput(this,'scenario','${scenario.scenarioId}_verify','Professional verification needed')"/><label for="${scenario.scenarioId}_verify_no">否 — 目前的資訊已足夠</label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scenario-actions">
+      <div class="scenario-actions-label">後續行動 — 請點擊任何符合您直覺反應的選項 (為實驗介面不會有真正的執行動作，點擊你會有的反應即可)</div>
+      <button class="btn btn-secondary btn-sm" onclick="Study.actionViewSources('${scenario.scenarioId}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        查看資料來源
+      </button>
+      <button class="btn btn-secondary btn-sm" onclick="Study.actionVerify('${scenario.scenarioId}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        我想去其他網站驗證
+      </button>
+      <button class="btn btn-accent btn-sm" onclick="Study.actionFollowAdvice('${scenario.scenarioId}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+        我會聽從這項建議
+      </button>
+    </div>
+
+    <div class="btn-row mt-6">
+      ${index > 0 ? `<button class="btn btn-ghost" onclick="Study.prevScenario()">← 上一個情境</button>` : ""}
+      <button class="btn btn-primary" onclick="Study.nextScenario()">
+        ${index < total - 1 ? (scenario.isExample ? "完成範例，開始正式測驗 →" : "下一個情境 →") : "完成所有測驗 →"}
+      </button>
+    </div>
+  `;
+}
+
+Study.prevScenario = function() {
+  if (State.currentScenarioIndex > 0) {
+    Logger.scenarioExit(SCENARIOS[State.currentScenarioIndex].scenarioId);
+    State.currentScenarioIndex--;
+    Study.renderScenario(State.currentScenarioIndex);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+};
+
+/* ==========================================================
+   SCALE BUILDER
+========================================================== */
+function buildScaleHTML(id, labelText, ends, scenarioId) {
+  const opts = [1, 2, 3, 4, 5].map(n => `
+    <div class="scale-option">
+      <input type="radio" name="${id}" id="${id}_${n}" value="${n}"
+        onchange="Study.logScale('${id}', ${n}, '${scenarioId}', '${labelText.substring(0,40)}')"/>
+      <label for="${id}_${n}">
+        <div class="scale-btn">${n}</div>
+        <span class="scale-tick sr-only">${n}</span>
+      </label>
+    </div>`).join("");
+
+  return `<div class="scale-group">
+    <div class="scale-label">
+      <span class="scale-label-text">${labelText}</span>
+      <span class="scale-required">必填</span>
+    </div>
+    <div class="scale-options">${opts}</div>
+    <div class="scale-ends"><span>${ends[0]}</span><span>${ends[1]}</span></div>
+  </div>`;
+}
+
+Study.logScale = function(id, value, scenarioId, label) {
+  Logger.log("scale_response", { scenarioId, targetId: id, targetLabel: label, value });
+};
+
+/* ==========================================================
+   DHL SCALE BUILDER
+========================================================== */
+function buildDHLScales() {
+  const container = document.getElementById("dhlScales");
+  if (!container) return;
+  container.innerHTML = DHL_ITEMS.map(item => buildScaleHTML(
+    item.id, item.text,
+    ["非常不同意", "非常同意"],
+    "background"
+  )).join("");
+}
+
+function buildReflectionScales() {
+  const container = document.getElementById("reflectionScales");
+  if (!container) return;
+  container.innerHTML = REFLECTION_ITEMS.map(item => buildScaleHTML(
+    item.id, item.text, item.ends, "reflection"
+  )).join("");
+}
+
+/* ==========================================================
+   COLLECT SCENARIO RESPONSE
+========================================================== */
+function collectScenarioResponse(scenarioId) {
+  const scaleKeys = ["trust", "accuracy", "risk", "verify_intention", "accept_intention", "confidence"];
+  const ratings = {};
+  scaleKeys.forEach(k => {
+    const sel = document.querySelector(`input[name="${scenarioId}_${k}"]:checked`);
+    ratings[k] = sel ? parseInt(sel.value) : null;
+  });
+
+  const judgmentSel = document.querySelector(`input[name="${scenarioId}_judgment"]:checked`);
+  const verifySel = document.querySelector(`input[name="${scenarioId}_verify"]:checked`);
+
+  return {
+    participantId: State.participantId,
+    sessionId: State.sessionId,
+    conditionId: State.conditionId,
+    scenarioId,
+    ...ratings,
+    overallJudgment: judgmentSel ? judgmentSel.value : null,
+    needsProfessionalVerification: verifySel ? verifySel.value : null,
+    metrics: { ...State.scenarioMetrics[scenarioId] }
+  };
+}
+
+/* ==========================================================
+   EXPORT HELPERS
+========================================================== */
+function buildExportPayload() {
+  return {
+    exportTimestamp: new Date().toISOString(),
+    studyConfig: STUDY_CONFIG,
+    participantData: State.participantData,
+    scenarioResponses: State.scenarioResponses,
+    scenarioMetrics: State.scenarioMetrics,
+    interactionLogs: State.interactionLogs,
+    scenarios: SCENARIOS.map(s => ({ scenarioId: s.scenarioId, riskLevel: s.riskLevel, title: s.title }))
+  };
+}
+
+function buildResponsesCSV() {
+  if (!State.scenarioResponses.length) return "No data collected yet.";
+  const keys = Object.keys(State.scenarioResponses[0]).filter(k => k !== "metrics");
+  const metricKeys = State.scenarioResponses[0].metrics ? Object.keys(State.scenarioResponses[0].metrics) : [];
+  const allKeys = [...keys, ...metricKeys.map(k => "metric_" + k)];
+  const rows = State.scenarioResponses.map(r => {
+    const base = keys.map(k => csvCell(r[k]));
+    const mets = metricKeys.map(k => csvCell(r.metrics ? r.metrics[k] : ""));
+    return [...base, ...mets].join(",");
+  });
+  return [allKeys.join(","), ...rows].join("\n");
+}
+
+function buildLogsCSV() {
+  if (!State.interactionLogs.length) return "No data collected yet.";
+  const keys = Object.keys(State.interactionLogs[0]);
+  const rows = State.interactionLogs.map(r => keys.map(k => csvCell(r[k])).join(","));
+  return [keys.join(","), ...rows].join("\n");
+}
+
+function csvCell(val) {
+  if (val === null || val === undefined) return "";
+  const s = String(val);
+  if (s.includes(",") || s.includes('"') || s.includes("\n")) return '"' + s.replace(/"/g, '""') + '"';
+  return s;
+}
+
+function downloadBlob(content, type, filename) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/* ==========================================================
+   DARK MODE TOGGLE
+========================================================== */
+(function () {
+  const t = document.querySelector('[data-theme-toggle]');
+  const r = document.documentElement;
+  let d = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+  r.setAttribute('data-theme', d);
+  const sunIcon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  const moonIcon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  if (t) {
+    t.innerHTML = d === 'dark' ? sunIcon : moonIcon;
+    t.addEventListener('click', () => {
+      d = d === 'dark' ? 'light' : 'dark';
+      r.setAttribute('data-theme', d);
+      t.innerHTML = d === 'dark' ? sunIcon : moonIcon;
+      t.setAttribute('aria-label', 'Switch to ' + (d === 'dark' ? 'light' : 'dark') + ' mode');
+    });
+  }
+})();
+
+/* ==========================================================
+   INIT
+========================================================== */
+document.addEventListener("DOMContentLoaded", () => {
+  // Build progress bar
+  buildProgressBar();
+  updateProgressBar("welcome");
+
+  // Build DHL scales
+  buildDHLScales();
+  buildReflectionScales();
+
+  // Init state
+  State.participantData.participantId = State.participantId;
+  State.participantData.sessionId = State.sessionId;
+
+  // Initial log
+  Logger.log("section_view", { sectionId: "welcome", targetLabel: "Study opened" });
+  Logger.log("tutorial_start", { sectionId: "welcome", targetLabel: "Session start" });
+});
+</script>
+
+<script data-pplx-inline-edit>
+(function(){
+  if(window===window.top)return;
+  function inlineAll(orig,clone){
+    if(orig.nodeType!==1)return;
+    try{
+      var cs=getComputedStyle(orig);
+      var t='';
+      for(var i=0;i<cs.length;i++){t+=cs[i]+':'+cs.getPropertyValue(cs[i])+';';}
+      clone.style.cssText=t;
+    }catch(e){}
+    var oc=orig.children,cc=clone.children;
+    for(var j=0;j<oc.length&&j<cc.length;j++){inlineAll(oc[j],cc[j]);}
+  }
+  function stripExternal(clone){
+    var imgs=clone.querySelectorAll('img');
+    for(var i=0;i<imgs.length;i++){
+      var s=imgs[i].getAttribute('src');
+      if(s&&!s.startsWith('data:'))imgs[i].removeAttribute('src');
+    }
+    var all=clone.querySelectorAll('*');
+    for(var i=0;i<all.length;i++){
+      var st=all[i].style.cssText;
+      if(st&&st.indexOf('url(')>=0){
+        all[i].style.cssText=st.replace(/url\(["']?(?!data:)[^)"']*["']?\)/gi,'none');
+      }
+    }
+  }
+  window.addEventListener('message',function(e){
+    if(!e.data||e.data.type!=='INLINE_EDIT_CAPTURE_REQUEST')return;
+    var scrollX=window.scrollX||window.pageXOffset||0;
+    var scrollY=window.scrollY||window.pageYOffset||0;
+    var w=window.innerWidth,h=window.innerHeight;
+    try{
+      var clone=document.documentElement.cloneNode(true);
+      var rm=clone.querySelectorAll('script,link[rel="stylesheet"],style');
+      for(var i=0;i<rm.length;i++){rm[i].remove();}
+      inlineAll(document.documentElement,clone);
+      stripExternal(clone);
+      var html=new XMLSerializer().serializeToString(clone);
+      var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'">'
+        +'<foreignObject width="100%" height="100%">'
+        +'<div xmlns="http://www.w3.org/1999/xhtml" style="width:'+w+'px;height:'+h+'px;overflow:hidden">'
+        +'<div style="transform:translate(-'+scrollX+'px,-'+scrollY+'px);transform-origin:top left">'
+        +html+'</div></div></foreignObject></svg>';
+      var svgUrl='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+      var img=new Image();
+      img.onload=function(){
+        var c=document.createElement('canvas');c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0);
+        window.parent.postMessage({type:'INLINE_EDIT_SCREENSHOT_RESULT',dataUrl:c.toDataURL('image/png'),scrollX:scrollX,scrollY:scrollY},'*');
+      };
+      img.onerror=function(){
+        window.parent.postMessage({type:'INLINE_EDIT_SCREENSHOT_RESULT',dataUrl:null,scrollX:scrollX,scrollY:scrollY},'*');
+      };
+      img.src=svgUrl;
+    }catch(err){
+      window.parent.postMessage({type:'INLINE_EDIT_SCREENSHOT_RESULT',dataUrl:null,scrollX:scrollX,scrollY:scrollY},'*');
+    }
+  });
+})();
+</script></body>
+</html>
