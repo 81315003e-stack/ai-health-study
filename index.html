@@ -1399,8 +1399,8 @@
               </select>
             </div>
             <div class="form-group">
-              <label class="form-label" for="bg-field">Field of Study or Work</label>
-              <input type="text" class="form-input" id="bg-field" placeholder="[PLACEHOLDER: e.g., Healthcare, Engineering, Humanities…]" onchange="Study.logInput(this, 'background', 'bg-field', 'Field of Study')" />
+              <label class="form-label" for="bg-field">就讀系所或目前工作領域</label>
+              <input type="text" class="form-input" id="bg-field" placeholder="例如，醫療保健、工程、人文學科……" onchange="Study.logInput(this, 'background', 'bg-field', 'Field of Study')" />
             </div>
           </div>
 
@@ -1588,42 +1588,23 @@
       <div class="section-inner">
         <div class="section-eyebrow">Step 6 of 6 — Final Step</div>
         <h2 class="section-title">完成測驗與資料上傳</h2>
-        <p class="section-lead">感謝您完成本次研究。請閱讀下方的研究說明，並協助我們將資料回傳。</p>
+        <p class="section-lead">感謝您完成本次研究！請先點擊下方按鈕將資料回傳，隨後您可閱讀底下的研究說明與感謝。</p>
 
         <div class="alert alert-success mb-6">
           <span class="alert-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
           <div class="alert-body">
             <div class="alert-title">測驗完成</div>
-            <div class="alert-text">您已成功完成全部 <span id="debriefScenarioCount">—</span> 個情境。非常感謝您的參與！</div>
+            <div class="alert-text">您已成功完成全部 <span id="debriefScenarioCount"></span> 個情境。非常感謝您的參與！</div>
           </div>
         </div>
 
-        <div class="card mb-6">
-          <h3 class="card-title">研究說明與感謝 (Study Debrief)</h3>
-          <p class="card-body">
-            非常感謝您抽出寶貴的時間參與本次測試！您的真實回饋對我們的研究有極大的幫助。<br><br>
-            在此，我們想向您進一步說明本專案的相關細節：<br><br>
-            • <strong>研究的真正目的：</strong>本研究的核心，其實是想探討「介面設計如何影響使用者的判斷」。我們想了解當 AI 生成的健康資訊具備不同的設計（例如：是否清楚標示資料來源、是否有安全警告提示）時，是否會影響您的信任度與對資訊風險的感知。為了捕捉您最自然的閱讀反應，我們在測試前並未向您透露這個介面比較的機制。<br><br>
-            • <strong>情境為虛構範例：</strong>我們必須向您澄清，您在剛剛的測驗中所閱讀到的「健康搜尋情境」與「AI 摘要內容」，都是為了本次實驗而特別編寫的虛構範例。請千萬不要將這些內容視為真實的醫療建議。在現實生活中遇到任何健康問題時，請務必尋求專業醫師的協助。<br><br>
-            • <strong>資料隱私與聯絡方式：</strong>您在本次測試中產生的所有操作數據（如點擊行為、問卷評分）均已完全去識別化，僅供學術探討與介面優化使用。<br><br>
-            若您對本研究有任何疑問，或想進一步了解研究細節，非常歡迎透過電子郵件與我們聯繫：[請填寫你的 Email 信箱]。
-          </p>
-          <div class="alert alert-info" style="margin-top:var(--space-5)">
-            <span class="alert-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
-            <div class="alert-body">
-              <div class="alert-title">醫療免責聲明</div>
-              <div class="alert-text">再次提醒您，本測驗中的健康資訊僅為實驗示意用途。在現實生活中遇到任何健康或醫療問題時，請務必尋求專業醫師或醫療機構的協助。</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card mb-6" style="text-align: center; padding: 3rem 2rem; max-width: 600px; margin: 3rem auto;">
+        <div class="card mb-6" style="text-align: center; padding: 3rem 2rem; max-width: 600px; margin: 2rem auto;">
           <div style="display: inline-flex; justify-content: center; align-items: center; width: 48px; height: 48px; background: var(--color-primary-highlight); color: var(--color-primary); border-radius: 50%; margin-bottom: 1rem;">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           </div>
           
           <h3 class="card-title">上傳研究資料</h3>
-          <p class="text-muted text-sm mb-6">您已閱讀完畢所有說明！請點擊下方按鈕，將您的作答結果傳送至研究團隊。傳送完成後即可關閉網頁。</p>
+          <p class="text-muted text-sm mb-6">請點擊下方按鈕，將您的作答結果與互動紀錄傳送至研究團隊。出現「送出成功」後即可安全關閉網頁。</p>
 
           <div id="submitArea">
             <button class="btn btn-primary btn-lg" id="submitDataBtn" onclick="Study.submitData()" style="min-width: 240px; box-shadow: var(--shadow-md);">
@@ -1648,10 +1629,31 @@
           </div>
         </div>
 
-        <div class="alert alert-info" style="max-width: 600px; margin: 0 auto;">
+        <div class="alert alert-info mb-8" style="max-width: 600px; margin: 0 auto 3rem auto;">
           <span class="alert-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
           <div class="alert-body">
             <div class="alert-text">受試者編號 (Participant ID): <strong id="debriefParticipantId">—</strong> &nbsp;|&nbsp; 測試組別: <strong id="debriefCondition">—</strong></div>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="card mb-6">
+          <h3 class="card-title">研究說明與感謝 (Study Debrief)</h3>
+          <p class="card-body">
+            非常感謝您抽出寶貴的時間參與本次測試！您的真實回饋對我們的研究有極大的幫助。<br><br>
+            在此，我們想向您進一步說明本專案的相關細節：<br><br>
+            • <strong>研究的真正目的：</strong>本研究的核心，其實是想探討「介面設計如何影響使用者的判斷」。我們想了解當 AI 生成的健康資訊具備不同的設計（例如：是否清楚標示資料來源、是否有安全警告提示）時，是否會影響您的信任度與對資訊風險的感知。為了捕捉您最自然的閱讀反應，我們在測試前並未向您透露這個介面比較的機制。<br><br>
+            • <strong>情境為虛構範例：</strong>我們必須向您澄清，您在剛剛的測驗中所閱讀到的「健康搜尋情境」與「AI 摘要內容」，都是為了本次實驗而特別編寫的虛構範例。請千萬不要將這些內容視為真實的醫療建議。在現實生活中遇到任何健康問題時，請務必尋求專業醫師的協助。<br><br>
+            • <strong>資料隱私與聯絡方式：</strong>您在本次測試中產生的所有操作數據（如點擊行為、問卷評分）均已完全去識別化，僅供學術探討與介面優化使用。<br><br>
+            若您對本研究有任何疑問，或想進一步了解研究細節，非常歡迎透過電子郵件與我們聯繫：81315003E@ntnu.edu.tw。
+          </p>
+          <div class="alert alert-info" style="margin-top:var(--space-5)">
+            <span class="alert-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+            <div class="alert-body">
+              <div class="alert-title">醫療免責聲明</div>
+              <div class="alert-text">再次提醒您，本測驗中的健康資訊僅為實驗示意用途。在現實生活中遇到任何健康或醫療問題時，請務必尋求專業醫師或醫療機構的協助。</div>
+            </div>
           </div>
         </div>
 
