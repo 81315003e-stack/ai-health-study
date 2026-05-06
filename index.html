@@ -31,6 +31,34 @@
   border-color: var(--color-primary);
 }
 .hide-cites .cite-tag { display: none !important; }
+    /* 後續行動的複選按鈕樣式 (反白效果) */
+    .action-pill { display: inline-block; }
+    .action-pill input[type='checkbox'] { position: absolute; opacity: 0; width: 0; height: 0; }
+    .action-pill label {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-lg);
+      border: 2px solid var(--color-border);
+      background: transparent;
+      color: var(--color-primary);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      font-family: var(--font-body);
+      cursor: pointer;
+      min-height: 2.25rem;
+      transition: all var(--transition);
+    }
+    .action-pill label:hover {
+      background: var(--color-surface-offset);
+      border-color: var(--color-primary);
+    }
+    .action-pill input[type='checkbox']:checked + label {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+    }
     /* =========================================================
        DESIGN TOKENS
     ========================================================= */
@@ -2305,25 +2333,28 @@ const Study = {
     }
   },
 
-  actionViewSources(scenarioId) {
-    Logger.log("button_click", { scenarioId, targetId: "view_sources_btn", targetLabel: "View Sources" });
-    const panel = document.getElementById("sourcesAccordion_" + scenarioId);
-    if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  actionViewSources(el, scenarioId) {
+    Logger.log("intent_toggle", { scenarioId, targetId: "view_sources_btn", targetLabel: "View Sources", value: el.checked });
+    // 如果勾選了查看來源，還是貼心地幫他往上捲動
+    if (el.checked) {
+      const panel = document.getElementById("sourcesAccordion_" + scenarioId);
+      if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   },
 
-  actionVerify(scenarioId) {
-    Logger.log("button_click", { scenarioId, targetId: "verify_btn", targetLabel: "Verify with other sources" });
-    if (State.scenarioMetrics[scenarioId]) State.scenarioMetrics[scenarioId].verifyClicked = true;
+  actionVerify(el, scenarioId) {
+    Logger.log("intent_toggle", { scenarioId, targetId: "verify_btn", targetLabel: "Verify with other sources", value: el.checked });
+    if (State.scenarioMetrics[scenarioId]) State.scenarioMetrics[scenarioId].verifyClicked = el.checked;
   },
 
-  actionFollowAdvice(scenarioId) {
-    Logger.log("button_click", { scenarioId, targetId: "follow_btn", targetLabel: "I would follow this advice" });
-    if (State.scenarioMetrics[scenarioId]) State.scenarioMetrics[scenarioId].followAdviceClicked = true;
+  actionFollowAdvice(el, scenarioId) {
+    Logger.log("intent_toggle", { scenarioId, targetId: "follow_btn", targetLabel: "I would follow this advice", value: el.checked });
+    if (State.scenarioMetrics[scenarioId]) State.scenarioMetrics[scenarioId].followAdviceClicked = el.checked;
   },
-  // 👇 新增這段：追蹤「分享資訊」的點擊
-  actionShare(scenarioId) {
-    Logger.log("button_click", { scenarioId, targetId: "share_btn", targetLabel: "I would share this info" });
-    if (State.scenarioMetrics[scenarioId]) State.scenarioMetrics[scenarioId].shareClicked = true;
+
+  actionShare(el, scenarioId) {
+    Logger.log("intent_toggle", { scenarioId, targetId: "share_btn", targetLabel: "I would share this info", value: el.checked });
+    if (State.scenarioMetrics[scenarioId]) State.scenarioMetrics[scenarioId].shareClicked = el.checked;
   },
   toggleSource(sourceId, scenarioId) {
     const el = document.getElementById("expand_" + sourceId);
@@ -2576,28 +2607,39 @@ function buildScenarioHTML(scenario, index, total, condition) {
     </div>
 
     <div class="scenario-actions">
-      <div class="scenario-actions-label">後續行動 — 請點擊任何符合您直覺反應的選項 (為實驗介面不會有真正的執行動作，點擊你會有的反應即可)</div>
+      <div class="scenario-actions-label">後續行動 — 請選擇任何符合您直覺反應的選項 (可複選)</div>
       
-      <button class="btn btn-secondary btn-sm" onclick="Study.actionViewSources('${scenario.scenarioId}')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        查看資料來源
-      </button>
-      
-      <button class="btn btn-secondary btn-sm" onclick="Study.actionVerify('${scenario.scenarioId}')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-        我想去其他網站驗證
-      </button>
-      
-      <button class="btn btn-secondary btn-sm" onclick="Study.actionFollowAdvice('${scenario.scenarioId}')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
-        我會聽從這項建議
-      </button>
+      <div class="action-pill">
+        <input type="checkbox" id="act_src_${scenario.scenarioId}" onchange="Study.actionViewSources(this, '${scenario.scenarioId}')">
+        <label for="act_src_${scenario.scenarioId}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          查看資料來源
+        </label>
+      </div>
 
-      <!-- 新增的分享按鈕 -->
-      <button class="btn btn-secondary btn-sm" onclick="Study.actionShare('${scenario.scenarioId}')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        我會分享這項資訊
-      </button>
+      <div class="action-pill">
+        <input type="checkbox" id="act_ver_${scenario.scenarioId}" onchange="Study.actionVerify(this, '${scenario.scenarioId}')">
+        <label for="act_ver_${scenario.scenarioId}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          我想去其他網站驗證
+        </label>
+      </div>
+
+      <div class="action-pill">
+        <input type="checkbox" id="act_fol_${scenario.scenarioId}" onchange="Study.actionFollowAdvice(this, '${scenario.scenarioId}')">
+        <label for="act_fol_${scenario.scenarioId}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+          我會聽從這項建議
+        </label>
+      </div>
+
+      <div class="action-pill">
+        <input type="checkbox" id="act_sha_${scenario.scenarioId}" onchange="Study.actionShare(this, '${scenario.scenarioId}')">
+        <label for="act_sha_${scenario.scenarioId}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          我會分享這項資訊
+        </label>
+      </div>
     </div>
 
     <div class="btn-row mt-6">
