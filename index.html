@@ -2104,6 +2104,7 @@ const Logger = {
     if (eventType === "warning_click") m.warnExpandCount++;
     if (eventType === "button_click" && opts.targetId === "verify_btn") m.verifyClicked = true;
     if (eventType === "button_click" && opts.targetId === "follow_btn") m.followAdviceClicked = true;
+    if (eventType === "button_click" && opts.targetId === "share_btn") m.shareClicked = true;
     if (eventType === "scroll_depth_update" && opts.value) m.maxScrollDepthPct = Math.max(m.maxScrollDepthPct, opts.value);
   },
 
@@ -2120,6 +2121,7 @@ const Logger = {
       warnExpandCount: 0,
       verifyClicked: false,
       followAdviceClicked: false,
+      shareClicked: false, // 👈 新增這一行
       maxScrollDepthPct: 0,
       timeToFirstSourceClickMs: null
     };
@@ -2318,7 +2320,11 @@ const Study = {
     Logger.log("button_click", { scenarioId, targetId: "follow_btn", targetLabel: "I would follow this advice" });
     if (State.scenarioMetrics[scenarioId]) State.scenarioMetrics[scenarioId].followAdviceClicked = true;
   },
-
+  // 👇 新增這段：追蹤「分享資訊」的點擊
+  actionShare(scenarioId) {
+    Logger.log("button_click", { scenarioId, targetId: "share_btn", targetLabel: "I would share this info" });
+    if (State.scenarioMetrics[scenarioId]) State.scenarioMetrics[scenarioId].shareClicked = true;
+  },
   toggleSource(sourceId, scenarioId) {
     const el = document.getElementById("expand_" + sourceId);
     const isOpen = el.classList.contains("open");
@@ -2571,17 +2577,26 @@ function buildScenarioHTML(scenario, index, total, condition) {
 
     <div class="scenario-actions">
       <div class="scenario-actions-label">後續行動 — 請點擊任何符合您直覺反應的選項 (為實驗介面不會有真正的執行動作，點擊你會有的反應即可)</div>
+      
       <button class="btn btn-secondary btn-sm" onclick="Study.actionViewSources('${scenario.scenarioId}')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         查看資料來源
       </button>
+      
       <button class="btn btn-secondary btn-sm" onclick="Study.actionVerify('${scenario.scenarioId}')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
         我想去其他網站驗證
       </button>
-      <button class="btn btn-accent btn-sm" onclick="Study.actionFollowAdvice('${scenario.scenarioId}')">
+      
+      <button class="btn btn-secondary btn-sm" onclick="Study.actionFollowAdvice('${scenario.scenarioId}')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
         我會聽從這項建議
+      </button>
+
+      <!-- 新增的分享按鈕 -->
+      <button class="btn btn-secondary btn-sm" onclick="Study.actionShare('${scenario.scenarioId}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        我會分享這項資訊
       </button>
     </div>
 
