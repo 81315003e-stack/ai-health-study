@@ -1,0 +1,49 @@
+{
+  "scenarios": [
+    {
+      "id": "scenario-1",
+      "title": "血糖管理",
+      "category": "Endocrinology",
+      "query": "How to manage blood sugar levels naturally without medication",
+      "searchDisplay": "血糖管理 > 自然方法",
+      "description": "瞭解關於血糖管理的最新 AI 摘要",
+      "icon": "🩺"
+    },
+    {
+      "id": "scenario-2",
+      "title": "心臟健康",
+      "category": "Cardiology",
+      "query": "Heart disease prevention and management strategies",
+      "searchDisplay": "心臟健康 > 預防策略",
+      "description": "探索心臟健康的最新建議",
+      "icon": "❤️"
+    },
+    {
+      "id": "scenario-3",
+      "title": "高血壓控制",
+      "category": "Hypertension",
+      "query": "How to lower blood pressure naturally and safely",
+      "searchDisplay": "高血壓 > 自然療法",
+      "description": "瞭解高血壓管理的最新方法",
+      "icon": "📊"
+    },
+    {
+      "id": "scenario-4",
+      "title": "睡眠質量",
+      "category": "Sleep",
+      "query": "How to improve sleep quality and treat insomnia",
+      "searchDisplay": "睡眠 > 改善方法",
+      "description": "探索改善睡眠的科學方法",
+      "icon": "😴"
+    },
+    {
+      "id": "scenario-5",
+      "title": "體重管理",
+      "category": "Weight",
+      "query": "Healthy weight management and nutrition strategies",
+      "searchDisplay": "體重 > 營養管理",
+      "description": "瞭解體重管理的最新建議",
+      "icon": "⚖️"
+    }
+  ]
+}
