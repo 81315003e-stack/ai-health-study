@@ -2597,10 +2597,10 @@ function buildScenarioHTML(scenario, index, total, condition) {
         </div>
 
         <div class="judgment-group">
-          <div class="judgment-label">您認為這項資訊需要尋求專業人員（如醫師）驗證嗎？</div>
+          <div class="judgment-label">您認為這以上的搜尋摘要結果需要尋求專業人員（如醫師）驗證嗎？</div>
           <div class="radio-group">
             <div class="radio-pill"><input type="radio" name="${scenario.scenarioId}_verify" id="${scenario.scenarioId}_verify_yes" value="yes" onchange="Study.logInput(this,'scenario','${scenario.scenarioId}_verify','Professional verification needed')"/><label for="${scenario.scenarioId}_verify_yes">是 — 需要諮詢專業人員</label></div>
-            <div class="radio-pill"><input type="radio" name="${scenario.scenarioId}_verify" id="${scenario.scenarioId}_verify_no" value="no" onchange="Study.logInput(this,'scenario','${scenario.scenarioId}_verify','Professional verification needed')"/><label for="${scenario.scenarioId}_verify_no">否 — 目前的資訊已足夠</label></div>
+            <div class="radio-pill"><input type="radio" name="${scenario.scenarioId}_verify" id="${scenario.scenarioId}_verify_no" value="no" onchange="Study.logInput(this,'scenario','${scenario.scenarioId}_verify','Professional verification needed')"/><label for="${scenario.scenarioId}_verify_no">否 — 目前摘要整理的資訊已足夠</label></div>
           </div>
         </div>
       </div>
