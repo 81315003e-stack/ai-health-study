@@ -1211,7 +1211,34 @@
     .source-type-government { background: var(--color-success-bg); color: var(--color-success); border-color: var(--color-success-border); }
     .source-type-media { background: var(--color-surface-offset-2); color: var(--color-text-muted); border-color: var(--color-border); }
     .source-type-unknown { background: var(--color-surface-offset-2); color: var(--color-text-faint); border-color: var(--color-border); }
-  </style>
+  
+
+/* patched v4: equal styling for all scenario action buttons */
+.scenario-actions { display:flex; flex-wrap:wrap; gap:var(--space-4,16px); align-items:center; }
+.scenario-actions .scenario-actions-label { width:100%; }
+.scenario-actions .btn,
+.scenario-actions .btn:hover,
+.scenario-actions .btn:active,
+.scenario-actions .btn:focus-visible,
+.scenario-actions .btn-primary,
+.scenario-actions .btn-primary:hover,
+.scenario-actions .btn-primary:active,
+.scenario-actions .btn-primary:focus-visible,
+.scenario-actions .btn-secondary,
+.scenario-actions .btn-secondary:hover,
+.scenario-actions .btn-secondary:active,
+.scenario-actions .btn-secondary:focus-visible,
+.scenario-actions .btn-accent,
+.scenario-actions .btn-accent:hover,
+.scenario-actions .btn-accent:active,
+.scenario-actions .btn-accent:focus-visible {
+  background: transparent !important;
+  color: var(--color-primary) !important;
+  border: 2px solid var(--color-border) !important;
+  box-shadow: none !important;
+}
+
+</style>
 </head>
 <body>
 
@@ -2579,9 +2606,13 @@ function buildScenarioHTML(scenario, index, total, condition) {
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
         我想去其他網站驗證
       </button>
-      <button class="btn btn-accent btn-sm" onclick="Study.actionFollowAdvice('${scenario.scenarioId}')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+      <button class="btn btn-secondary btn-sm" onclick="Study.actionFollowAdvice('${scenario.scenarioId}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-1.7v-7.6A2 2 0 0 1 4 11h3"/></svg>
         我會聽從這項建議
+      </button>
+      <button class="btn btn-secondary btn-sm" onclick="Study.logCustomAction('${scenario.scenarioId}','share_summary','是否願意把這段摘要分享給其他人')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51 15.42 17.49"/><path d="M15.41 6.51 8.59 10.49"/></svg>
+        是否願意把這段摘要分享給其他人
       </button>
     </div>
 
@@ -2593,6 +2624,14 @@ function buildScenarioHTML(scenario, index, total, condition) {
     </div>
   `;
 }
+
+
+
+Study.logCustomAction = function(scenarioId, actionKey, actionLabel) {
+  if (window.Logger && typeof Logger.event === 'function') {
+    Logger.event('scenario_action', { scenarioId, actionKey, actionLabel, ts: Date.now() });
+  }
+};
 
 Study.prevScenario = function() {
   if (State.currentScenarioIndex > 0) {
