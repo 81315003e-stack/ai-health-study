@@ -2317,9 +2317,11 @@ const Study = {
 
   nextScenario() {
     const current = SCENARIOS[State.currentScenarioIndex];
+    // 👉 修正順序一：先呼叫 scenarioExit 記錄精準的停留時間
+    Logger.scenarioExit(current.scenarioId);
+    // 👉 修正順序二：後打包資料
     const responseObj = collectScenarioResponse(current.scenarioId);
     State.scenarioResponses.push(responseObj);
-    Logger.scenarioExit(current.scenarioId);
 
     State.currentScenarioIndex++;
     if (State.currentScenarioIndex < SCENARIOS.length) {
